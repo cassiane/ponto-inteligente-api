@@ -6,13 +6,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -60,7 +66,8 @@ public class Funcionario implements Serializable {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+	
+	@Column(name = "senha", nullable = false)
 	public String getSenha() {
 		return senha;
 	}
@@ -129,7 +136,8 @@ public class Funcionario implements Serializable {
 	public void setPerfil(PerfilEnum perfil) {
 		this.perfil = perfil;
 	}
-
+	
+	@Column(name = "data_criacao", nullable = false)
 	public Date getDataCriacao() {
 		return dataCriacao;
 	}
@@ -137,7 +145,8 @@ public class Funcionario implements Serializable {
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
-
+	
+	@Column(name = "data_atualizacao", nullable = false)
 	public Date getDataAtualizacao() {
 		return dataAtualizacao;
 	}
@@ -145,7 +154,8 @@ public class Funcionario implements Serializable {
 	public void setDataAtualizacao(Date dataAtualizacao) {
 		this.dataAtualizacao = dataAtualizacao;
 	}
-
+	
+	@ManyToOne(fetch = FetchType.EAGER)
 	public Empresa getEmpresa() {
 		return empresa;
 	}
@@ -153,7 +163,8 @@ public class Funcionario implements Serializable {
 	public void setEmpresa(Empresa empresa) {
 		this.empresa = empresa;
 	}
-
+	
+	@OneToMany(mappedBy = "funcionario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	public List<Lancamento> getLancamentos() {
 		return lancamentos;
 	}
@@ -161,5 +172,26 @@ public class Funcionario implements Serializable {
 	public void setLancamentos(List<Lancamento> lancamentos) {
 		this.lancamentos = lancamentos;
 	}
+	
+	@PreUpdate	
+	public void preUpdate(){
+		dataAtualizacao = new Date();
+	}
+	
+	@PrePersist
+	public void prePersist(){
+		final Date atual = new Date();
+		dataAtualizacao = atual;
+		dataCriacao = atual;
+	}
 
+	@Override
+	public String toString() {
+		return "Funcionario [id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", cpf=" + cpf
+				+ ", valorHora=" + valorHora + ", qtdHorasTrabalhoDia=" + qtdHorasTrabalhoDia + ", qtdHorasAlmoco="
+				+ qtdHorasAlmoco + ", perfil=" + perfil + ", dataCriacao=" + dataCriacao + ", dataAtualizacao="
+				+ dataAtualizacao + ", empresa=" + empresa + ", lancamentos=" + lancamentos + "]";
+	}
+	
+	
 }
