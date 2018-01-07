@@ -1,4 +1,4 @@
-package com.project.pontointeligente.utils;
+package com.project.pontointeligente.api.utils;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;

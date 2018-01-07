@@ -1,4 +1,4 @@
-package com.project.pontointeligente.services;
+package com.project.pontointeligente.api.services;
 
 import static org.junit.Assert.*;
 
