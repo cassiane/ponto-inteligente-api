@@ -3,17 +3,17 @@ package com.project.pontointeligente.api.services;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 import com.project.pontointeligente.api.entities.Lancamento;
 
 public interface LancamentoService {
 	
-    Optional<Lancamento> buscarPorFuncionarioId(Long funcionarioId);
+	Page<Lancamento> buscarPorFuncionarioId(Long funcionarioId, PageRequest pageRequest);
 	
-	Page<Lancamento> buscarPorFuncionarioIdPaginado(Long funcionarioId, Pageable pageable);
+	Optional<Lancamento> buscarPorId(Long id);
 	
 	Lancamento persistir(Lancamento lancamento);
 	
-	void Remover(Long id);
+	void remover(Long id);
 }

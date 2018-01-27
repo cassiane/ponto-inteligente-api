@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,7 +26,6 @@ import com.project.pontointeligente.api.services.EmpresaService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-// para obter uma instacia do mockmvc
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class EmpresaControllerTest {
@@ -44,6 +44,7 @@ public class EmpresaControllerTest {
 	private static final String RAZAO_SOCIAL = "CSSoftware";
 
 	@Test
+	@WithMockUser
 	public void testBuscarEmpresaCnpjInvalido() throws Exception {
 		BDDMockito.given(this.empresaService.buscarPorCnpj(Mockito.anyString())).willReturn(Optional.empty());
 
@@ -53,6 +54,7 @@ public class EmpresaControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	public void testBuscarEmpresaCnpjValido() throws Exception {
 		BDDMockito.given(this.empresaService.buscarPorCnpj(Mockito.anyString()))
 				.willReturn(Optional.of(this.obterDadosEmpresa()));

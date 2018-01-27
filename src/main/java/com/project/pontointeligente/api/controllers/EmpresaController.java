@@ -25,13 +25,13 @@ public class EmpresaController {
 	private static final Logger log = LoggerFactory.getLogger(EmpresaController.class);
 	
 	@Autowired
-	private EmpresaService empresaServie;
+	private EmpresaService empresaService;
 	
 	@GetMapping(value = "/cnpj/{cnpj}")
 	public ResponseEntity<Response<EmpresaDto>> buscarPorCnpj(@PathVariable("cnpj") String cnpj) {
 		log.info("Buscando empresa por CNPJ: {}", cnpj);
 		Response<EmpresaDto> response = new Response<>();
-		Optional<Empresa> empresa = this.empresaServie.buscarPorCnpj(cnpj);
+		Optional<Empresa> empresa = this.empresaService.buscarPorCnpj(cnpj);
 		
 		if (!empresa.isPresent()) {
 			response.getErrors().add("Empresa não encontrada para o CNPJ: "+cnpj);

@@ -47,13 +47,13 @@ public class LancamentoServiceTest {
 
 	@Test
 	public void testBuscarPorFuncionarioIdPaginado() {
-		Page<Lancamento> lancamento = this.lancamentoService.buscarPorFuncionarioIdPaginado(1L, new PageRequest(0, 10));
+		Page<Lancamento> lancamento = this.lancamentoService.buscarPorFuncionarioId(1L, new PageRequest(0, 10));
 		assertNotNull(lancamento);
 	}
 
 	@Test
 	public void testBuscarPorFuncionarioId() {
-		Optional<Lancamento> lancamento = this.lancamentoService.buscarPorFuncionarioId(1L);
+		Optional<Lancamento> lancamento = this.lancamentoService.buscarPorId(1L);
 		assertTrue(lancamento.isPresent());
 	}
 
