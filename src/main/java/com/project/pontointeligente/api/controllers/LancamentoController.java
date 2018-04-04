@@ -1,11 +1,13 @@
 package com.project.pontointeligente.api.controllers;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
+import com.project.pontointeligente.api.dtos.LancamentoDto;
+import com.project.pontointeligente.api.entities.Funcionario;
+import com.project.pontointeligente.api.entities.Lancamento;
+import com.project.pontointeligente.api.enums.OperacaoEnum;
+import com.project.pontointeligente.api.enums.TipoEnum;
+import com.project.pontointeligente.api.response.Response;
+import com.project.pontointeligente.api.services.FuncionarioService;
+import com.project.pontointeligente.api.services.LancamentoService;
 import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,27 +17,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.project.pontointeligente.api.dtos.LancamentoDto;
-import com.project.pontointeligente.api.entities.Funcionario;
-import com.project.pontointeligente.api.entities.Lancamento;
-import com.project.pontointeligente.api.enums.TipoEnum;
-import com.project.pontointeligente.api.response.Response;
-import com.project.pontointeligente.api.services.FuncionarioService;
-import com.project.pontointeligente.api.services.LancamentoService;
+import javax.validation.Valid;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/lancamentos")
@@ -104,8 +95,8 @@ public class LancamentoController {
 
 	/**
 	 * Adiciona um novo lançamento.
-	 * 
-	 * @param lancamento
+	 *
+     * @param lancamentoDto
 	 * @param result
 	 * @return ResponseEntity<Response<LancamentoDto>>
 	 * @throws ParseException 
@@ -124,12 +115,39 @@ public class LancamentoController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		lancamento = this.lancamentoService.persistir(lancamento);
-		response.setData(this.converterLancamentoDto(lancamento));
-		return ResponseEntity.ok(response);
-	}
+        List<Lancamento> lancamentos = buscarPreviousHash();
+        if (!CollectionUtils.isEmpty(lancamentos)) {
+            lancamento.setPreviousHash(lancamentos.stream().findFirst().get().getHash());
+            lancamento.setOperacao(OperacaoEnum.INCLUSAO);
+            lancamento.setHash(lancamento.calculateHash());
+            lancamento.mineBlock(5);
 
-	/**
+            lancamentos.add(lancamento);
+            if (NoobChain.isChainValid(lancamentos)) {
+                lancamento = this.lancamentoService.persistir(lancamento);
+                response.setData(this.converterLancamentoDto(lancamento));
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.unprocessableEntity().body(null);
+            }
+        } else {
+            lancamento.setPreviousHash("0");
+
+            lancamento.setOperacao(OperacaoEnum.INCLUSAO);
+            lancamento.setHash(lancamento.calculateHash());
+            lancamento.mineBlock(5);
+
+            lancamento = this.lancamentoService.persistir(lancamento);
+            response.setData(this.converterLancamentoDto(lancamento));
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    private List<Lancamento> buscarPreviousHash() {
+        return lancamentoService.buscarUltimosLancamentos();
+    }
+
+    /**
 	 * Atualiza os dados de um lançamento.
 	 * 
 	 * @param id
@@ -163,22 +181,22 @@ public class LancamentoController {
 	 * @param id
 	 * @return ResponseEntity<Response<Lancamento>>
 	 */
-	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<Response<String>> remover(@PathVariable("id") Long id) {
-		log.info("Removendo lançamento: {}", id);
-		Response<String> response = new Response<String>();
-		Optional<Lancamento> lancamento = this.lancamentoService.buscarPorId(id);
-
-		if (!lancamento.isPresent()) {
-			log.info("Erro ao remover devido ao lançamento ID: {} ser inválido.", id);
-			response.getErrors().add("Erro ao remover lançamento. Registro não encontrado para o id " + id);
-			return ResponseEntity.badRequest().body(response);
-		}
-
-		this.lancamentoService.remover(id);
-		return ResponseEntity.ok(new Response<String>());
-	}
+//	@DeleteMapping(value = "/{id}")
+//	@PreAuthorize("hasAnyRole('ADMIN')")
+//	public ResponseEntity<Response<String>> remover(@PathVariable("id") Long id) {
+//		log.info("Removendo lançamento: {}", id);
+//		Response<String> response = new Response<String>();
+//		Optional<Lancamento> lancamento = this.lancamentoService.buscarPorId(id);
+//
+//		if (!lancamento.isPresent()) {
+//			log.info("Erro ao remover devido ao lançamento ID: {} ser inválido.", id);
+//			response.getErrors().add("Erro ao remover lançamento. Registro não encontrado para o id " + id);
+//			return ResponseEntity.badRequest().body(response);
+//		}
+//
+//		this.lancamentoService.remover(id);
+//		return ResponseEntity.ok(new Response<String>());
+//	}
 
 	/**
 	 * Valida um funcionário, verificando se ele é existente e válido no

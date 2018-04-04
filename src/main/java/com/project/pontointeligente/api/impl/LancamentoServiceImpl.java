@@ -1,18 +1,17 @@
 package com.project.pontointeligente.api.impl;
 
-import java.util.Optional;
-
+import com.project.pontointeligente.api.entities.Lancamento;
+import com.project.pontointeligente.api.repositories.LancamentoRepository;
+import com.project.pontointeligente.api.services.LancamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.project.pontointeligente.api.entities.Lancamento;
-import com.project.pontointeligente.api.repositories.LancamentoRepository;
-import com.project.pontointeligente.api.services.LancamentoService;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LancamentoServiceImpl implements LancamentoService {
@@ -29,14 +28,15 @@ public class LancamentoServiceImpl implements LancamentoService {
 		return this.lancamentoRepository.save(lancamento);
 	}
 
-	@Override
-	public void remover(Long id) {
-		this.lancamentoRepository.delete(id);
-	}
+    @Override
+    public List<Lancamento> buscarUltimosLancamentos() {
+        return lancamentoRepository.findTop25();
+    }
 
-	@Cacheable("lancamentoPorId")
+    @Cacheable("lancamentoPorId")
 	public Optional<Lancamento> buscarPorId(Long id) {
 		return Optional.ofNullable(this.lancamentoRepository.findOne(id));
 	}
+
 
 }
