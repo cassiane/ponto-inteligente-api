@@ -1,6 +1,8 @@
 package com.project.pontointeligente.api.impl;
 
 import com.project.pontointeligente.api.entities.Lancamento;
+import com.project.pontointeligente.api.entities.LancamentoLog;
+import com.project.pontointeligente.api.repositories.LancamentoLogRepository;
 import com.project.pontointeligente.api.repositories.LancamentoRepository;
 import com.project.pontointeligente.api.services.LancamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
 
+	@Autowired
+    private LancamentoLogRepository lancamentoLogRepository;
+
 	public Page<Lancamento> buscarPorFuncionarioId(Long funcionarioId, PageRequest pageRequest) {
 		return this.lancamentoRepository.findByFuncionarioId(funcionarioId, pageRequest);
 	}
@@ -27,6 +32,16 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Lancamento persistir(Lancamento lancamento) {
 		return this.lancamentoRepository.save(lancamento);
 	}
+
+    @Override
+    public LancamentoLog persistir(LancamentoLog lancamentoLog) {
+        return lancamentoLogRepository.save(lancamentoLog);
+    }
+
+    @Override
+    public void remover(Long id) {
+        lancamentoRepository.delete(id);
+    }
 
     @Override
     public List<Lancamento> buscarUltimosLancamentos() {

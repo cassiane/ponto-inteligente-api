@@ -2,7 +2,6 @@ package com.project.pontointeligente.api.entities;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import com.project.pontointeligente.api.enums.OperacaoEnum;
 import com.project.pontointeligente.api.enums.TipoEnum;
 import com.project.pontointeligente.api.utils.HashUtils;
 
@@ -19,17 +18,12 @@ public class Lancamento implements Serializable {
 	private Long id;
 	private Date data;
 	private String descricao;
-	private String localizacao;
 	private Date dataCriacao;
 	private Date dataAtualizacao;
 	private TipoEnum tipo;
 	private Funcionario funcionario;
     private String hash;
     private String previousHash;
-    private OperacaoEnum operacao;
-    private int nonce;
-    private Long idLancamentoAlterado;
-    private String hashAssinaturaEmpresa;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -51,7 +45,7 @@ public class Lancamento implements Serializable {
 		this.data = data;
 	}
 	
-	@Column(name = "descricao", nullable = true)
+	@Column(name = "descricao")
 	public String getDescricao() {
 		return descricao;
 	}
@@ -60,31 +54,14 @@ public class Lancamento implements Serializable {
 		this.descricao = descricao;
 	}
 	
-	@Column(name = "localizacao", nullable = true)
-	public String getLocalizacao() {
-		return localizacao;
-	}
-
-	public void setLocalizacao(String localizacao) {
-		this.localizacao = localizacao;
-	}
-	
 	@Column(name = "data_criacao", nullable = false)
 	public Date getDataCriacao() {
 		return dataCriacao;
-	}
-
-	public void setDataCriacao(Date dataCriacao) {
-		this.dataCriacao = dataCriacao;
 	}
 	
 	@Column(name = "data_atualizacao", nullable = false)
 	public Date getDataAtualizacao() {
 		return dataAtualizacao;
-	}
-
-	public void setDataAtualizacao(Date dataAtualizacao) {
-		this.dataAtualizacao = dataAtualizacao;
 	}
 	
 	@Enumerated(EnumType.STRING)
@@ -124,75 +101,33 @@ public class Lancamento implements Serializable {
         this.previousHash = previousHash;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "operacao", nullable = false)
-    public OperacaoEnum getOperacao() {
-        return operacao;
-    }
-
-    public void setOperacao(OperacaoEnum operacao) {
-        this.operacao = operacao;
-    }
-
-    @Column(name = "id_lancamento_alterado")
-    public Long getIdLancamentoAlterado() {
-        return idLancamentoAlterado;
-    }
-
-    public void setIdLancamentoAlterado(Long idLancamentoAlterado) {
-        this.idLancamentoAlterado = idLancamentoAlterado;
-    }
-
-    @Column(name = "hash_assinatura_empresa", nullable = false)
-    public String getHashAssinaturaEmpresa() {
-        return hashAssinaturaEmpresa;
-    }
-
-    public void setHashAssinaturaEmpresa(String hashAssinaturaEmpresa) {
-        this.hashAssinaturaEmpresa = hashAssinaturaEmpresa;
-    }
-
     public Lancamento() {
         final Date atual = new Date();
         dataAtualizacao = atual;
         dataCriacao = atual;
     }
 
-    //    @PreUpdate
-//	public void preUpdate(){
-//		dataAtualizacao = new Date();
-//		operacao = OperacaoEnum.ALTERACAO;
-//	}
+    @PreUpdate
+	public void preUpdate(){
+		dataAtualizacao = new Date();
+	}
 
-//	@PrePersist
-//	public void prePersist(){\
-//        final Date atual = new Date();
-//        dataAtualizacao = atual;
-//        dataCriacao = atual;
-//	}
+	@PrePersist
+	public void prePersist(){
+        final Date atual = new Date();
+        dataAtualizacao = atual;
+        dataCriacao = atual;
+	}
 
-    public String calculateHash() {
-        String calculatedhash = HashUtils.applySha256(
+    public String calculateHashInsert() {
+        return HashUtils.applySha256(
                 previousHash +
                         dataCriacao.toString() +
                         dataAtualizacao.toString() +
                         data.toString() +
                         funcionario.getCpf() +
-                        tipo.toString() +
-                        operacao.toString() +
-                        Integer.toString(nonce)
+                        tipo.toString()
         );
-        return calculatedhash;
-    }
-
-    //Increases nonce value until hash target is reached.
-    public void mineBlock(int difficulty) {
-        String target = HashUtils.getDificultyString(difficulty); //Create a string with difficulty * "0"
-        while (!hash.substring(0, difficulty).equals(target)) {
-            nonce++;
-            hash = calculateHash();
-        }
-        System.out.println("Block Mined!!! : " + hash);
     }
 
     @Override
@@ -200,25 +135,20 @@ public class Lancamento implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Lancamento)) return false;
         Lancamento that = (Lancamento) o;
-        return nonce == that.nonce &&
-                Objects.equal(getId(), that.getId()) &&
+        return Objects.equal(getId(), that.getId()) &&
                 Objects.equal(getData(), that.getData()) &&
                 Objects.equal(getDescricao(), that.getDescricao()) &&
-                Objects.equal(getLocalizacao(), that.getLocalizacao()) &&
                 Objects.equal(getDataCriacao(), that.getDataCriacao()) &&
                 Objects.equal(getDataAtualizacao(), that.getDataAtualizacao()) &&
                 getTipo() == that.getTipo() &&
                 Objects.equal(getFuncionario(), that.getFuncionario()) &&
                 Objects.equal(getHash(), that.getHash()) &&
-                Objects.equal(getPreviousHash(), that.getPreviousHash()) &&
-                getOperacao() == that.getOperacao() &&
-                Objects.equal(getIdLancamentoAlterado(), that.getIdLancamentoAlterado()) &&
-                Objects.equal(getHashAssinaturaEmpresa(), that.getHashAssinaturaEmpresa());
+                Objects.equal(getPreviousHash(), that.getPreviousHash());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId(), getData(), getDescricao(), getLocalizacao(), getDataCriacao(), getDataAtualizacao(), getTipo(), getFuncionario(), getHash(), getPreviousHash(), getOperacao(), nonce, getIdLancamentoAlterado(), getHashAssinaturaEmpresa());
+        return Objects.hashCode(getId(), getData(), getDescricao(), getDataCriacao(), getDataAtualizacao(), getTipo(), getFuncionario(), getHash(), getPreviousHash());
     }
 
     @Override
@@ -227,19 +157,12 @@ public class Lancamento implements Serializable {
                 .add("id", id)
                 .add("data", data)
                 .add("descricao", descricao)
-                .add("localizacao", localizacao)
                 .add("dataCriacao", dataCriacao)
                 .add("dataAtualizacao", dataAtualizacao)
                 .add("tipo", tipo)
                 .add("funcionario", funcionario)
                 .add("hash", hash)
                 .add("previousHash", previousHash)
-                .add("operacao", operacao)
-                .add("nonce", nonce)
-                .add("idLancamentoAlterado", idLancamentoAlterado)
-                .add("hashAssinaturaEmpresa", hashAssinaturaEmpresa)
                 .toString();
     }
-
-
 }

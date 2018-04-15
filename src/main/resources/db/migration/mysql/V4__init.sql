@@ -27,7 +27,6 @@ create table lancamento (
 	data_atualizacao datetime not null,
 	data_criacao datetime not null,
 	descricao varchar(255) not null,
-	localizacao varchar(255) not null,
 	tipo varchar(255) not null,
 	funcionario_id bigint(20) default null
 ) ENGINE=InnoDB default charset = utf8;

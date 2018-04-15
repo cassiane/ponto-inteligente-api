@@ -2,6 +2,8 @@ package com.project.pontointeligente.api.dtos;
 
 import java.util.Optional;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class LancamentoDto {
@@ -10,8 +12,8 @@ public class LancamentoDto {
 	private String data;
 	private String tipo;
 	private String descricao;
-	private String localizacao;
 	private Long funcionarioId;
+	private String hash;
 
 	public LancamentoDto() {
 	}
@@ -49,14 +51,6 @@ public class LancamentoDto {
 		this.descricao = descricao;
 	}
 
-	public String getLocalizacao() {
-		return localizacao;
-	}
-
-	public void setLocalizacao(String localizacao) {
-		this.localizacao = localizacao;
-	}
-
 	public Long getFuncionarioId() {
 		return funcionarioId;
 	}
@@ -65,10 +59,41 @@ public class LancamentoDto {
 		this.funcionarioId = funcionarioId;
 	}
 
-	@Override
-	public String toString() {
-		return "LancamentoDto [id=" + id + ", data=" + data + ", tipo=" + tipo + ", descricao=" + descricao
-				+ ", localizacao=" + localizacao + ", funcionarioId=" + funcionarioId + "]";
-	}
+    public String getHash() {
+        return hash;
+    }
 
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LancamentoDto)) return false;
+        LancamentoDto that = (LancamentoDto) o;
+        return Objects.equal(getId(), that.getId()) &&
+                Objects.equal(getData(), that.getData()) &&
+                Objects.equal(getTipo(), that.getTipo()) &&
+                Objects.equal(getDescricao(), that.getDescricao()) &&
+                Objects.equal(getFuncionarioId(), that.getFuncionarioId()) &&
+                Objects.equal(getHash(), that.getHash());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId(), getData(), getTipo(), getDescricao(), getFuncionarioId(), getHash());
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("data", data)
+                .add("tipo", tipo)
+                .add("descricao", descricao)
+                .add("funcionarioId", funcionarioId)
+                .add("hash", hash)
+                .toString();
+    }
 }

@@ -3,8 +3,10 @@ package com.project.pontointeligente.api.controllers;
 import com.project.pontointeligente.api.dtos.LancamentoDto;
 import com.project.pontointeligente.api.entities.Funcionario;
 import com.project.pontointeligente.api.entities.Lancamento;
+import com.project.pontointeligente.api.entities.LancamentoLog;
 import com.project.pontointeligente.api.enums.OperacaoEnum;
 import com.project.pontointeligente.api.enums.TipoEnum;
+import com.project.pontointeligente.api.exceptions.InfraestructureException;
 import com.project.pontointeligente.api.response.Response;
 import com.project.pontointeligente.api.services.FuncionarioService;
 import com.project.pontointeligente.api.services.LancamentoService;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -103,9 +106,9 @@ public class LancamentoController {
 	 */
 	@PostMapping
 	public ResponseEntity<Response<LancamentoDto>> adicionar(@Valid @RequestBody LancamentoDto lancamentoDto,
-			BindingResult result) throws ParseException {
+			BindingResult result) throws ParseException, InfraestructureException {
 		log.info("Adicionando lançamento: {}", lancamentoDto.toString());
-		Response<LancamentoDto> response = new Response<LancamentoDto>();
+		Response<LancamentoDto> response = new Response<>();
 		validarFuncionario(lancamentoDto, result);
 		Lancamento lancamento = this.converterDtoParaLancamento(lancamentoDto, result);
 
@@ -118,48 +121,28 @@ public class LancamentoController {
         List<Lancamento> lancamentos = buscarPreviousHash();
         if (!CollectionUtils.isEmpty(lancamentos)) {
             lancamento.setPreviousHash(lancamentos.stream().findFirst().get().getHash());
-            lancamento.setOperacao(OperacaoEnum.INCLUSAO);
-            lancamento.setHash(lancamento.calculateHash());
-            lancamento.mineBlock(5);
+            lancamento.setHash(lancamento.calculateHashInsert());
 
             lancamentos.add(lancamento);
             if (NoobChain.isChainValid(lancamentos)) {
                 lancamento = this.lancamentoService.persistir(lancamento);
                 response.setData(this.converterLancamentoDto(lancamento));
+                LancamentoLog log = new LancamentoLog(lancamento);
+                this.lancamentoService.persistir(log);
                 return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.unprocessableEntity().body(null);
             }
         } else {
-            lancamento.setPreviousHash("0");
-
-            lancamento.setOperacao(OperacaoEnum.INCLUSAO);
-            lancamento.setHash(lancamento.calculateHash());
-            lancamento.mineBlock(5);
-
-            lancamento = this.lancamentoService.persistir(lancamento);
-            response.setData(this.converterLancamentoDto(lancamento));
-            return ResponseEntity.ok(response);
+            throw new InfraestructureException("Não foram encontrados lançamentos anteriores.");
         }
     }
 
-    private List<Lancamento> buscarPreviousHash() {
-        return lancamentoService.buscarUltimosLancamentos();
-    }
-
-    /**
-	 * Atualiza os dados de um lançamento.
-	 * 
-	 * @param id
-	 * @param lancamentoDto
-	 * @return ResponseEntity<Response<Lancamento>>
-	 * @throws ParseException 
-	 */
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Response<LancamentoDto>> atualizar(@PathVariable("id") Long id,
 			@Valid @RequestBody LancamentoDto lancamentoDto, BindingResult result) throws ParseException {
 		log.info("Atualizando lançamento: {}", lancamentoDto.toString());
-		Response<LancamentoDto> response = new Response<LancamentoDto>();
+		Response<LancamentoDto> response = new Response<>();
 		validarFuncionario(lancamentoDto, result);
 		lancamentoDto.setId(Optional.of(id));
 		Lancamento lancamento = this.converterDtoParaLancamento(lancamentoDto, result);
@@ -175,36 +158,27 @@ public class LancamentoController {
 		return ResponseEntity.ok(response);
 	}
 
-	/**
-	 * Remove um lançamento por ID.
-	 * 
-	 * @param id
-	 * @return ResponseEntity<Response<Lancamento>>
-	 */
-//	@DeleteMapping(value = "/{id}")
-//	@PreAuthorize("hasAnyRole('ADMIN')")
-//	public ResponseEntity<Response<String>> remover(@PathVariable("id") Long id) {
-//		log.info("Removendo lançamento: {}", id);
-//		Response<String> response = new Response<String>();
-//		Optional<Lancamento> lancamento = this.lancamentoService.buscarPorId(id);
-//
-//		if (!lancamento.isPresent()) {
-//			log.info("Erro ao remover devido ao lançamento ID: {} ser inválido.", id);
-//			response.getErrors().add("Erro ao remover lançamento. Registro não encontrado para o id " + id);
-//			return ResponseEntity.badRequest().body(response);
-//		}
-//
-//		this.lancamentoService.remover(id);
-//		return ResponseEntity.ok(new Response<String>());
-//	}
+    private List<Lancamento> buscarPreviousHash() {
+        return lancamentoService.buscarUltimosLancamentos();
+    }
 
-	/**
-	 * Valida um funcionário, verificando se ele é existente e válido no
-	 * sistema.
-	 * 
-	 * @param lancamentoDto
-	 * @param result
-	 */
+	@DeleteMapping(value = "/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	public ResponseEntity<Response<String>> remover(@PathVariable("id") Long id) {
+		log.info("Removendo lançamento: {}", id);
+		Response<String> response = new Response<>();
+		Optional<Lancamento> lancamento = this.lancamentoService.buscarPorId(id);
+
+		if (!lancamento.isPresent()) {
+			log.info("Erro ao remover devido ao lançamento ID: {} ser inválido.", id);
+			response.getErrors().add("Erro ao remover lançamento. Registro não encontrado para o id " + id);
+			return ResponseEntity.badRequest().body(response);
+		}
+
+		this.lancamentoService.remover(id);
+		return ResponseEntity.ok(new Response<String>());
+	}
+
 	private void validarFuncionario(LancamentoDto lancamentoDto, BindingResult result) {
 		if (lancamentoDto.getFuncionarioId() == null) {
 			result.addError(new ObjectError("funcionario", "Funcionário não informado."));
@@ -218,32 +192,18 @@ public class LancamentoController {
 		}
 	}
 
-	/**
-	 * Converte uma entidade lançamento para seu respectivo DTO.
-	 * 
-	 * @param lancamento
-	 * @return LancamentoDto
-	 */
 	private LancamentoDto converterLancamentoDto(Lancamento lancamento) {
 		LancamentoDto lancamentoDto = new LancamentoDto();
 		lancamentoDto.setId(Optional.of(lancamento.getId()));
 		lancamentoDto.setData(this.dateFormat.format(lancamento.getData()));
 		lancamentoDto.setTipo(lancamento.getTipo().toString());
 		lancamentoDto.setDescricao(lancamento.getDescricao());
-		lancamentoDto.setLocalizacao(lancamento.getLocalizacao());
 		lancamentoDto.setFuncionarioId(lancamento.getFuncionario().getId());
+		lancamentoDto.setHash(lancamento.getHash());
 
 		return lancamentoDto;
 	}
 
-	/**
-	 * Converte um LancamentoDto para uma entidade Lancamento.
-	 * 
-	 * @param lancamentoDto
-	 * @param result
-	 * @return Lancamento
-	 * @throws ParseException 
-	 */
 	private Lancamento converterDtoParaLancamento(LancamentoDto lancamentoDto, BindingResult result) throws ParseException {
 		Lancamento lancamento = new Lancamento();
 
@@ -260,7 +220,6 @@ public class LancamentoController {
 		}
 
 		lancamento.setDescricao(lancamentoDto.getDescricao());
-		lancamento.setLocalizacao(lancamentoDto.getLocalizacao());
 		lancamento.setData(this.dateFormat.parse(lancamentoDto.getData()));
 
 		if (EnumUtils.isValidEnum(TipoEnum.class, lancamentoDto.getTipo())) {

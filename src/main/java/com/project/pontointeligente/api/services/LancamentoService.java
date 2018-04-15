@@ -1,6 +1,7 @@
 package com.project.pontointeligente.api.services;
 
 import com.project.pontointeligente.api.entities.Lancamento;
+import com.project.pontointeligente.api.entities.LancamentoLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -15,7 +16,9 @@ public interface LancamentoService {
 	
 	Lancamento persistir(Lancamento lancamento);
 
-	//void remover(Long id);
+	LancamentoLog persistir(LancamentoLog lancamentoLog);
+
+	void remover(Long id);
 
 	List<Lancamento> buscarUltimosLancamentos();
 }

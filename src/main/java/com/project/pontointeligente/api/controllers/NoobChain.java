@@ -18,7 +18,7 @@ public class NoobChain {
             currentBlock = blockchain.get(i);
             previousBlock = blockchain.get(i - 1);
             //compare registered hash and calculated hash:
-            if (!currentBlock.getHash().equals(currentBlock.calculateHash())) {
+            if (!currentBlock.getHash().equals(currentBlock.calculateHashInsert())) {
                 System.out.println("Current Hashes not equal");
                 return false;
             }
@@ -27,11 +27,11 @@ public class NoobChain {
                 System.out.println("Previous Hashes not equal");
                 return false;
             }
-            //check if hash is solved
-            if (!currentBlock.getHash().substring(0, difficulty).equals(hashTarget)) {
-                System.out.println("This block hasn't been mined");
-                return false;
-            }
+//            //check if hash is solved
+//            if (!currentBlock.getHash().substring(0, difficulty).equals(hashTarget)) {
+//                System.out.println("This block hasn't been mined");
+//                return false;
+//            }
 
         }
         return true;
