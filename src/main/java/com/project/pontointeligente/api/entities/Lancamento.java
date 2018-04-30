@@ -4,22 +4,29 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.project.pontointeligente.api.enums.TipoEnum;
 import com.project.pontointeligente.api.utils.HashUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
+
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(name = "lancamento")
 public class Lancamento implements Serializable {
 
 	private static final long serialVersionUID = 236188582712441484L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Lancamento.class);
 
-	private Long id;
-	private Date data;
+    private Long id;
+	private LocalDateTime data;
 	private String descricao;
-	private Date dataCriacao;
-	private Date dataAtualizacao;
+	private LocalDateTime dataCriacao;
+	private LocalDateTime dataAtualizacao;
 	private TipoEnum tipo;
 	private Funcionario funcionario;
     private String hash;
@@ -34,14 +41,13 @@ public class Lancamento implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
-	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
+
 	@Column(name = "data", nullable = false)
-	public Date getData() {
+	public LocalDateTime getData() {
 		return data;
 	}
 
-	public void setData(Date data) {
+	public void setData(LocalDateTime data) {
 		this.data = data;
 	}
 	
@@ -55,12 +61,12 @@ public class Lancamento implements Serializable {
 	}
 	
 	@Column(name = "data_criacao", nullable = false)
-	public Date getDataCriacao() {
+	public LocalDateTime getDataCriacao() {
 		return dataCriacao;
 	}
-	
-	@Column(name = "data_atualizacao", nullable = false)
-	public Date getDataAtualizacao() {
+
+    @Column(name = "data_atualizacao", nullable = false)
+	public LocalDateTime getDataAtualizacao() {
 		return dataAtualizacao;
 	}
 	
@@ -101,32 +107,31 @@ public class Lancamento implements Serializable {
         this.previousHash = previousHash;
     }
 
-    public Lancamento() {
-        final Date atual = new Date();
-        dataAtualizacao = atual;
-        dataCriacao = atual;
-    }
+	public void setDataCriacao(LocalDateTime dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
 
-    @PreUpdate
+	public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+		this.dataAtualizacao = dataAtualizacao;
+	}
+
+	@PreUpdate
 	public void preUpdate(){
-		dataAtualizacao = new Date();
+		dataAtualizacao = LocalDateTime.now();
 	}
 
 	@PrePersist
 	public void prePersist(){
-        final Date atual = new Date();
+        final LocalDateTime atual = LocalDateTime.now();
         dataAtualizacao = atual;
         dataCriacao = atual;
 	}
 
-    public String calculateHashInsert() {
-        return HashUtils.applySha256(
-                previousHash +
-                        dataCriacao.toString() +
-                        dataAtualizacao.toString() +
-                        data.toString() +
+    public String calculateHash() {
+	    LOGGER.info("Calculando hash dos dados: cpf: {}, data: {}", this.getFuncionario().getCpf(), data.toString());
+		return HashUtils.applySha256(
                         funcionario.getCpf() +
-                        tipo.toString()
+								data.toString()
         );
     }
 
@@ -151,18 +156,18 @@ public class Lancamento implements Serializable {
         return Objects.hashCode(getId(), getData(), getDescricao(), getDataCriacao(), getDataAtualizacao(), getTipo(), getFuncionario(), getHash(), getPreviousHash());
     }
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("id", id)
-                .add("data", data)
-                .add("descricao", descricao)
-                .add("dataCriacao", dataCriacao)
-                .add("dataAtualizacao", dataAtualizacao)
-                .add("tipo", tipo)
-                .add("funcionario", funcionario)
-                .add("hash", hash)
-                .add("previousHash", previousHash)
-                .toString();
-    }
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("id", id)
+				.add("data", data)
+				.add("descricao", descricao)
+				.add("dataCriacao", dataCriacao)
+				.add("dataAtualizacao", dataAtualizacao)
+				.add("tipo", tipo)
+				.add("funcionario", funcionario)
+				.add("hash", hash)
+				.add("previousHash", previousHash)
+				.toString();
+	}
 }

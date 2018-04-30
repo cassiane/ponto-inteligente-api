@@ -3,6 +3,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -49,7 +50,7 @@ public class LancamentoControllerTest {
 	private static final Long ID_FUNCIONARIO = 1L;
 	private static final Long ID_LANCAMENTO = 1L;
 	private static final String TIPO = TipoEnum.INICIO_TRABALHO.name();
-	private static final Date DATA = new Date();
+	private static final LocalDateTime DATA = LocalDateTime.now();
 	
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
@@ -109,7 +110,7 @@ public class LancamentoControllerTest {
 	private String obterJsonRequisicaoPost() throws JsonProcessingException {
 		LancamentoDto lancamentoDto = new LancamentoDto();
 		lancamentoDto.setId(null);
-		lancamentoDto.setData(this.dateFormat.format(DATA));
+		lancamentoDto.setData(DATA);
 		lancamentoDto.setTipo(TIPO);
 		lancamentoDto.setFuncionarioId(ID_FUNCIONARIO);
 		ObjectMapper mapper = new ObjectMapper();

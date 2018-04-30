@@ -22,7 +22,10 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.project.pontointeligente.api.enums.PerfilEnum;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "funcionario")
@@ -186,12 +189,46 @@ public class Funcionario implements Serializable {
 	}
 
 	@Override
-	public String toString() {
-		return "Funcionario [id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", cpf=" + cpf
-				+ ", valorHora=" + valorHora + ", qtdHorasTrabalhoDia=" + qtdHorasTrabalhoDia + ", qtdHorasAlmoco="
-				+ qtdHorasAlmoco + ", perfil=" + perfil + ", dataCriacao=" + dataCriacao + ", dataAtualizacao="
-				+ dataAtualizacao + ", empresa=" + empresa + ", lancamentos=" + lancamentos + "]";
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Funcionario)) return false;
+		Funcionario that = (Funcionario) o;
+		return Float.compare(that.getQtdHorasTrabalhoDia(), getQtdHorasTrabalhoDia()) == 0 &&
+				Float.compare(that.getQtdHorasAlmoco(), getQtdHorasAlmoco()) == 0 &&
+				Objects.equal(getId(), that.getId()) &&
+				Objects.equal(getNome(), that.getNome()) &&
+				Objects.equal(getEmail(), that.getEmail()) &&
+				Objects.equal(getSenha(), that.getSenha()) &&
+				Objects.equal(getCpf(), that.getCpf()) &&
+				Objects.equal(getValorHora(), that.getValorHora()) &&
+				getPerfil() == that.getPerfil() &&
+				Objects.equal(getDataCriacao(), that.getDataCriacao()) &&
+				Objects.equal(getDataAtualizacao(), that.getDataAtualizacao()) &&
+				Objects.equal(getEmpresa(), that.getEmpresa()) &&
+				Objects.equal(getLancamentos(), that.getLancamentos());
 	}
-	
-	
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(getId(), getNome(), getEmail(), getSenha(), getCpf(), getValorHora(), getQtdHorasTrabalhoDia(), getQtdHorasAlmoco(), getPerfil(), getDataCriacao(), getDataAtualizacao(), getEmpresa(), getLancamentos());
+	}
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("nome", nome)
+                .append("email", email)
+                .append("senha", senha)
+                .append("cpf", cpf)
+                .append("valorHora", valorHora)
+                .append("qtdHorasTrabalhoDia", qtdHorasTrabalhoDia)
+                .append("qtdHorasAlmoco", qtdHorasAlmoco)
+                .append("perfil", perfil)
+                .append("dataCriacao", dataCriacao)
+                .append("dataAtualizacao", dataAtualizacao)
+                .append("empresa", empresa)
+                .append("lancamentos", lancamentos)
+                .toString();
+    }
 }

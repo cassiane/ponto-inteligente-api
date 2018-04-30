@@ -4,7 +4,6 @@ import com.project.pontointeligente.api.dtos.LancamentoDto;
 import com.project.pontointeligente.api.entities.Funcionario;
 import com.project.pontointeligente.api.entities.Lancamento;
 import com.project.pontointeligente.api.entities.LancamentoLog;
-import com.project.pontointeligente.api.enums.OperacaoEnum;
 import com.project.pontointeligente.api.enums.TipoEnum;
 import com.project.pontointeligente.api.exceptions.InfraestructureException;
 import com.project.pontointeligente.api.response.Response;
@@ -29,6 +28,7 @@ import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -109,7 +109,7 @@ public class LancamentoController {
 			BindingResult result) throws ParseException, InfraestructureException {
 		log.info("Adicionando lançamento: {}", lancamentoDto.toString());
 		Response<LancamentoDto> response = new Response<>();
-		validarFuncionario(lancamentoDto, result);
+		Funcionario funcionario = validarFuncionario(lancamentoDto, result);
 		Lancamento lancamento = this.converterDtoParaLancamento(lancamentoDto, result);
 
 		if (result.hasErrors()) {
@@ -118,10 +118,13 @@ public class LancamentoController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
+		lancamento.setFuncionario(funcionario);
         List<Lancamento> lancamentos = buscarPreviousHash();
         if (!CollectionUtils.isEmpty(lancamentos)) {
-            lancamento.setPreviousHash(lancamentos.stream().findFirst().get().getHash());
-            lancamento.setHash(lancamento.calculateHashInsert());
+            lancamento.setPreviousHash(Objects.requireNonNull(lancamentos.stream()
+					.reduce((first, second) -> second)
+					.orElse(null)).getHash());
+            lancamento.setHash(lancamento.calculateHash());
 
             lancamentos.add(lancamento);
             if (NoobChain.isChainValid(lancamentos)) {
@@ -179,23 +182,26 @@ public class LancamentoController {
 		return ResponseEntity.ok(new Response<String>());
 	}
 
-	private void validarFuncionario(LancamentoDto lancamentoDto, BindingResult result) {
+	private Funcionario validarFuncionario(LancamentoDto lancamentoDto, BindingResult result) {
 		if (lancamentoDto.getFuncionarioId() == null) {
 			result.addError(new ObjectError("funcionario", "Funcionário não informado."));
-			return;
-		}
+			return null;
+	}
 
 		log.info("Validando funcionário id {}: ", lancamentoDto.getFuncionarioId());
 		Optional<Funcionario> funcionario = this.funcionarioService.buscarPorId(lancamentoDto.getFuncionarioId());
 		if (!funcionario.isPresent()) {
 			result.addError(new ObjectError("funcionario", "Funcionário não encontrado. ID inexistente."));
+			return null;
 		}
+
+		return funcionario.get();
 	}
 
 	private LancamentoDto converterLancamentoDto(Lancamento lancamento) {
 		LancamentoDto lancamentoDto = new LancamentoDto();
 		lancamentoDto.setId(Optional.of(lancamento.getId()));
-		lancamentoDto.setData(this.dateFormat.format(lancamento.getData()));
+		lancamentoDto.setData(lancamento.getData());
 		lancamentoDto.setTipo(lancamento.getTipo().toString());
 		lancamentoDto.setDescricao(lancamento.getDescricao());
 		lancamentoDto.setFuncionarioId(lancamento.getFuncionario().getId());
@@ -204,7 +210,7 @@ public class LancamentoController {
 		return lancamentoDto;
 	}
 
-	private Lancamento converterDtoParaLancamento(LancamentoDto lancamentoDto, BindingResult result) throws ParseException {
+	private Lancamento converterDtoParaLancamento(LancamentoDto lancamentoDto, BindingResult result)  {
 		Lancamento lancamento = new Lancamento();
 
 		if (lancamentoDto.getId().isPresent()) {
@@ -220,7 +226,7 @@ public class LancamentoController {
 		}
 
 		lancamento.setDescricao(lancamentoDto.getDescricao());
-		lancamento.setData(this.dateFormat.parse(lancamentoDto.getData()));
+		lancamento.setData(lancamentoDto.getData());
 
 		if (EnumUtils.isValidEnum(TipoEnum.class, lancamentoDto.getTipo())) {
 			lancamento.setTipo(TipoEnum.valueOf(lancamentoDto.getTipo()));

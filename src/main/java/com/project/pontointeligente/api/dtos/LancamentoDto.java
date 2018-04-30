@@ -1,5 +1,6 @@
 package com.project.pontointeligente.api.dtos;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
@@ -9,7 +10,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class LancamentoDto {
 
 	private Optional<Long> id = Optional.empty();
-	private String data;
+	private LocalDateTime data;
 	private String tipo;
 	private String descricao;
 	private Long funcionarioId;
@@ -27,11 +28,11 @@ public class LancamentoDto {
 	}
 
 	@NotEmpty(message = "Data não pode ser vazia.")
-	public String getData() {
+	public LocalDateTime getData() {
 		return data;
 	}
 
-	public void setData(String data) {
+	public void setData(LocalDateTime data) {
 		this.data = data;
 	}
 

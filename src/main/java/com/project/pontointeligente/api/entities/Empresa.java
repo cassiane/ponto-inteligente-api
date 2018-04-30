@@ -1,5 +1,9 @@
 package com.project.pontointeligente.api.entities;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -97,9 +101,32 @@ public class Empresa implements Serializable {
 	}
 
 	@Override
-	public String toString() {
-		return "Empresa [id=" + id + ", razaoSocial=" + razaoSocial + ", cnpj=" + cnpj + ", dataCriacao=" + dataCriacao
-				+ ", dataAtualizacao=" + dataAtualizacao + ", funcionarios=" + funcionarios + "]";
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Empresa)) return false;
+		Empresa empresa = (Empresa) o;
+		return Objects.equal(getId(), empresa.getId()) &&
+				Objects.equal(getRazaoSocial(), empresa.getRazaoSocial()) &&
+				Objects.equal(getCnpj(), empresa.getCnpj()) &&
+				Objects.equal(getDataCriacao(), empresa.getDataCriacao()) &&
+				Objects.equal(getDataAtualizacao(), empresa.getDataAtualizacao()) &&
+				Objects.equal(getFuncionarios(), empresa.getFuncionarios());
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(getId(), getRazaoSocial(), getCnpj(), getDataCriacao(), getDataAtualizacao(), getFuncionarios());
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.append("id", id)
+				.append("razaoSocial", razaoSocial)
+				.append("cnpj", cnpj)
+				.append("dataCriacao", dataCriacao)
+				.append("dataAtualizacao", dataAtualizacao)
+				.append("funcionarios", funcionarios)
+				.toString();
+	}
 }

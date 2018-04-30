@@ -5,17 +5,20 @@ import com.project.pontointeligente.api.enums.TipoEnum;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
+
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(name = "lancamentolog")
 public class LancamentoLog {
 
     private Long id;
-    private Date data;
+    private LocalDateTime data;
     private String descricao;
-    private Date dataCriacao;
-    private Date dataAtualizacao;
+    private LocalDateTime dataCriacao;
+    private LocalDateTime dataAtualizacao;
     private TipoEnum tipo;
     private Funcionario funcionario;
     private String hash;
@@ -31,11 +34,13 @@ public class LancamentoLog {
         this.tipo = lancamento.getTipo();
         this.funcionario = lancamento.getFuncionario();
         this.hash = lancamento.getHash();
-        this.previousHash = lancamento.getHash();
+        this.previousHash = lancamento.getPreviousHash();
         this.idLancamentoAlterado = lancamento.getId();
     }
 
-    public LancamentoLog(Date data, String descricao, Date dataCriacao, Date dataAtualizacao, TipoEnum tipo, Funcionario funcionario, String hash, String previousHash, OperacaoEnum operacao, Long idLancamentoAlterado) {
+    public LancamentoLog(LocalDateTime data, String descricao, LocalDateTime dataCriacao, LocalDateTime dataAtualizacao,
+                         TipoEnum tipo, Funcionario funcionario, String hash, String previousHash, OperacaoEnum operacao,
+                         Long idLancamentoAlterado) {
         this.data = data;
         this.descricao = descricao;
         this.dataCriacao = dataCriacao;
@@ -58,13 +63,12 @@ public class LancamentoLog {
         this.id = id;
     }
 
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @Column(name = "data", nullable = false)
-    public Date getData() {
+    public LocalDateTime getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDateTime data) {
         this.data = data;
     }
 
@@ -78,20 +82,20 @@ public class LancamentoLog {
     }
 
     @Column(name = "data_criacao", nullable = false)
-    public Date getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(Date dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
     @Column(name = "data_atualizacao", nullable = false)
-    public Date getDataAtualizacao() {
+    public LocalDateTime getDataAtualizacao() {
         return dataAtualizacao;
     }
 
-    public void setDataAtualizacao(Date dataAtualizacao) {
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
     }
 
