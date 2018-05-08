@@ -23,18 +23,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.project.pontointeligente.api.PontoInteligenteApplication;
 import com.project.pontointeligente.api.entities.Lancamento;
 import com.project.pontointeligente.api.repositories.LancamentoRepository;
-import com.project.pontointeligente.api.services.LancamentoService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PontoInteligenteApplication.class)
 @ActiveProfiles("test")
-public class LancamentoServiceTest {
+public class LancamentoServiceRepositoryTest {
 
 	@MockBean
 	private LancamentoRepository lancamentoRepository;
 
 	@Autowired
-	private LancamentoService lancamentoService;
+	private LancamentoServiceRepository lancamentoServiceRepository;
 
 	@Before
 	public void setUp() throws Exception {
@@ -47,19 +46,19 @@ public class LancamentoServiceTest {
 
 	@Test
 	public void testBuscarPorFuncionarioIdPaginado() {
-		Page<Lancamento> lancamento = this.lancamentoService.buscarPorFuncionarioId(1L, new PageRequest(0, 10));
+		Page<Lancamento> lancamento = this.lancamentoServiceRepository.buscarPorFuncionarioId(1L, new PageRequest(0, 10));
 		assertNotNull(lancamento);
 	}
 
 	@Test
 	public void testBuscarPorFuncionarioId() {
-		Optional<Lancamento> lancamento = this.lancamentoService.buscarPorId(1L);
+		Optional<Lancamento> lancamento = this.lancamentoServiceRepository.buscarPorId(1L);
 		assertTrue(lancamento.isPresent());
 	}
 
 	@Test
 	public void testPersistir() {
-		Lancamento lancamento = this.lancamentoService.persistir(new Lancamento());
+		Lancamento lancamento = this.lancamentoServiceRepository.persistir(new Lancamento());
 		assertNotNull(lancamento);
 	}
 

@@ -4,10 +4,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -32,7 +30,7 @@ import com.project.pontointeligente.api.entities.Funcionario;
 import com.project.pontointeligente.api.entities.Lancamento;
 import com.project.pontointeligente.api.enums.TipoEnum;
 import com.project.pontointeligente.api.services.FuncionarioService;
-import com.project.pontointeligente.api.services.LancamentoService;
+import com.project.pontointeligente.api.services.LancamentoServiceRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -44,7 +42,7 @@ public class LancamentoControllerTest {
 	private MockMvc mvc;
 	
 	@MockBean
-	private LancamentoService lancamentoService;
+	private LancamentoServiceRepository lancamentoServiceRepository;
 	
 	@MockBean
 	private FuncionarioService funcionarioService;
@@ -62,7 +60,7 @@ public class LancamentoControllerTest {
 	public void testCadastrarLancamento() throws Exception {
 		Lancamento lancamento = obterDadosLancamento();
 		BDDMockito.given(this.funcionarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Funcionario()));
-		BDDMockito.given(this.lancamentoService.persistir(Mockito.any(Lancamento.class))).willReturn(lancamento);
+		BDDMockito.given(this.lancamentoServiceRepository.persistir(Mockito.any(Lancamento.class))).willReturn(lancamento);
 
 		mvc.perform(MockMvcRequestBuilders.post(URL_BASE)
 				.content(this.obterJsonRequisicaoPost())
@@ -93,7 +91,7 @@ public class LancamentoControllerTest {
 	@Test
 	@WithMockUser(username = "admin@admin.com", roles = {"ADMIN"})
 	public void testRemoverLancamento() throws Exception {
-		BDDMockito.given(this.lancamentoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
+		BDDMockito.given(this.lancamentoServiceRepository.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
 
 		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO)
 				.accept(MediaType.APPLICATION_JSON))
@@ -103,7 +101,7 @@ public class LancamentoControllerTest {
 	@Test
 	@WithMockUser
 	public void testRemoverLancamentoAcessoNegado() throws Exception {
-		BDDMockito.given(this.lancamentoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
+		BDDMockito.given(this.lancamentoServiceRepository.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
 
 		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO)
 				.accept(MediaType.APPLICATION_JSON))
