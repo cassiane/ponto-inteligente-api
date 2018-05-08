@@ -7,6 +7,7 @@ import com.project.pontointeligente.api.entities.LancamentoLog;
 import com.project.pontointeligente.api.enums.TipoEnum;
 import com.project.pontointeligente.api.exceptions.InfraestructureException;
 import com.project.pontointeligente.api.response.Response;
+import com.project.pontointeligente.api.security.JwtUser;
 import com.project.pontointeligente.api.services.FuncionarioService;
 import com.project.pontointeligente.api.services.LancamentoService;
 import org.apache.commons.lang3.EnumUtils;
@@ -19,14 +20,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -106,10 +112,17 @@ public class LancamentoController {
 	 */
 	@PostMapping
 	public ResponseEntity<Response<LancamentoDto>> adicionar(@Valid @RequestBody LancamentoDto lancamentoDto,
-			BindingResult result) throws ParseException, InfraestructureException {
+			BindingResult result) throws Exception {
 		log.info("Adicionando lançamento: {}", lancamentoDto.toString());
+		Authentication autentication = SecurityContextHolder.getContext().getAuthentication();
+		JwtUser usuarioAutenticado = (JwtUser) autentication.getPrincipal();
 		Response<LancamentoDto> response = new Response<>();
 		Funcionario funcionario = validarFuncionario(lancamentoDto, result);
+
+		if (usuarioAutenticado.getUsername() != funcionario.getEmail()) {
+			throw new Exception("O usuário autenticado está realizando lançamentos para outra pessoa.");
+		}
+		
 		Lancamento lancamento = this.converterDtoParaLancamento(lancamentoDto, result);
 
 		if (result.hasErrors()) {
@@ -127,7 +140,7 @@ public class LancamentoController {
             lancamento.setHash(lancamento.calculateHash());
 
             lancamentos.add(lancamento);
-            if (NoobChain.isChainValid(lancamentos)) {
+            if (ValidadorBloco.isChainValid(lancamentos)) {
                 lancamento = this.lancamentoService.persistir(lancamento);
                 response.setData(this.converterLancamentoDto(lancamento));
                 LancamentoLog log = new LancamentoLog(lancamento);
@@ -201,7 +214,7 @@ public class LancamentoController {
 	private LancamentoDto converterLancamentoDto(Lancamento lancamento) {
 		LancamentoDto lancamentoDto = new LancamentoDto();
 		lancamentoDto.setId(Optional.of(lancamento.getId()));
-		lancamentoDto.setData(lancamento.getData());
+		lancamentoDto.setData(LocalDateTime.parse(lancamento.getData().toString(), DateTimeFormatter.ISO_DATE_TIME));
 		lancamentoDto.setTipo(lancamento.getTipo().toString());
 		lancamentoDto.setDescricao(lancamento.getDescricao());
 		lancamentoDto.setFuncionarioId(lancamento.getFuncionario().getId());
@@ -212,7 +225,6 @@ public class LancamentoController {
 
 	private Lancamento converterDtoParaLancamento(LancamentoDto lancamentoDto, BindingResult result)  {
 		Lancamento lancamento = new Lancamento();
-
 		if (lancamentoDto.getId().isPresent()) {
 			Optional<Lancamento> lanc = this.lancamentoService.buscarPorId(lancamentoDto.getId().get());
 			if (lanc.isPresent()) {
@@ -226,7 +238,7 @@ public class LancamentoController {
 		}
 
 		lancamento.setDescricao(lancamentoDto.getDescricao());
-		lancamento.setData(lancamentoDto.getData());
+		lancamento.setData(Timestamp.valueOf(lancamentoDto.getData().toString()));
 
 		if (EnumUtils.isValidEnum(TipoEnum.class, lancamentoDto.getTipo())) {
 			lancamento.setTipo(TipoEnum.valueOf(lancamentoDto.getTipo()));

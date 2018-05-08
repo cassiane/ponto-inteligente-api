@@ -5,7 +5,7 @@ import com.project.pontointeligente.api.enums.TipoEnum;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -15,10 +15,10 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 public class LancamentoLog {
 
     private Long id;
-    private LocalDateTime data;
+    private Timestamp data;
     private String descricao;
-    private LocalDateTime dataCriacao;
-    private LocalDateTime dataAtualizacao;
+    private Timestamp dataCriacao;
+    private Timestamp dataAtualizacao;
     private TipoEnum tipo;
     private Funcionario funcionario;
     private String hash;
@@ -38,7 +38,7 @@ public class LancamentoLog {
         this.idLancamentoAlterado = lancamento.getId();
     }
 
-    public LancamentoLog(LocalDateTime data, String descricao, LocalDateTime dataCriacao, LocalDateTime dataAtualizacao,
+    public LancamentoLog(Timestamp data, String descricao, Timestamp dataCriacao, Timestamp dataAtualizacao,
                          TipoEnum tipo, Funcionario funcionario, String hash, String previousHash, OperacaoEnum operacao,
                          Long idLancamentoAlterado) {
         this.data = data;
@@ -64,11 +64,11 @@ public class LancamentoLog {
     }
 
     @Column(name = "data", nullable = false)
-    public LocalDateTime getData() {
+    public Timestamp getData() {
         return data;
     }
 
-    public void setData(LocalDateTime data) {
+    public void setData(Timestamp data) {
         this.data = data;
     }
 
@@ -82,20 +82,20 @@ public class LancamentoLog {
     }
 
     @Column(name = "data_criacao", nullable = false)
-    public LocalDateTime getDataCriacao() {
+    public Timestamp getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(LocalDateTime dataCriacao) {
+    public void setDataCriacao(Timestamp dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
     @Column(name = "data_atualizacao", nullable = false)
-    public LocalDateTime getDataAtualizacao() {
+    public Timestamp getDataAtualizacao() {
         return dataAtualizacao;
     }
 
-    public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+    public void setDataAtualizacao(Timestamp dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
     }
 

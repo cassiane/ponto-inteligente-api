@@ -1,11 +1,11 @@
 package com.project.pontointeligente.api.dtos;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import org.hibernate.validator.constraints.NotEmpty;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class LancamentoDto {
 
@@ -27,7 +27,7 @@ public class LancamentoDto {
 		this.id = optional;
 	}
 
-	@NotEmpty(message = "Data não pode ser vazia.")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	public LocalDateTime getData() {
 		return data;
 	}

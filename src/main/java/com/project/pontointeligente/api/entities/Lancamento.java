@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -23,10 +24,10 @@ public class Lancamento implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(Lancamento.class);
 
     private Long id;
-	private LocalDateTime data;
+	private Timestamp data;
 	private String descricao;
-	private LocalDateTime dataCriacao;
-	private LocalDateTime dataAtualizacao;
+	private Timestamp dataCriacao;
+	private Timestamp dataAtualizacao;
 	private TipoEnum tipo;
 	private Funcionario funcionario;
     private String hash;
@@ -43,11 +44,11 @@ public class Lancamento implements Serializable {
 	}
 
 	@Column(name = "data", nullable = false)
-	public LocalDateTime getData() {
+	public Timestamp getData() {
 		return data;
 	}
 
-	public void setData(LocalDateTime data) {
+	public void setData(Timestamp data) {
 		this.data = data;
 	}
 	
@@ -61,12 +62,12 @@ public class Lancamento implements Serializable {
 	}
 	
 	@Column(name = "data_criacao", nullable = false)
-	public LocalDateTime getDataCriacao() {
+	public Timestamp getDataCriacao() {
 		return dataCriacao;
 	}
 
     @Column(name = "data_atualizacao", nullable = false)
-	public LocalDateTime getDataAtualizacao() {
+	public Timestamp getDataAtualizacao() {
 		return dataAtualizacao;
 	}
 	
@@ -107,22 +108,22 @@ public class Lancamento implements Serializable {
         this.previousHash = previousHash;
     }
 
-	public void setDataCriacao(LocalDateTime dataCriacao) {
+	public void setDataCriacao(Timestamp dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
 
-	public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+	public void setDataAtualizacao(Timestamp dataAtualizacao) {
 		this.dataAtualizacao = dataAtualizacao;
 	}
 
 	@PreUpdate
 	public void preUpdate(){
-		dataAtualizacao = LocalDateTime.now();
+		dataAtualizacao = Timestamp.valueOf(LocalDateTime.now());
 	}
 
 	@PrePersist
 	public void prePersist(){
-        final LocalDateTime atual = LocalDateTime.now();
+        final Timestamp atual = Timestamp.valueOf(LocalDateTime.now());
         dataAtualizacao = atual;
         dataCriacao = atual;
 	}

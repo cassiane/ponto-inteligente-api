@@ -2,8 +2,11 @@ package com.project.pontointeligente.api.controllers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;
 
@@ -50,7 +53,7 @@ public class LancamentoControllerTest {
 	private static final Long ID_FUNCIONARIO = 1L;
 	private static final Long ID_LANCAMENTO = 1L;
 	private static final String TIPO = TipoEnum.INICIO_TRABALHO.name();
-	private static final LocalDateTime DATA = LocalDateTime.now();
+	private static final Timestamp DATA = Timestamp.valueOf(LocalDateTime.now());
 	
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
@@ -110,7 +113,7 @@ public class LancamentoControllerTest {
 	private String obterJsonRequisicaoPost() throws JsonProcessingException {
 		LancamentoDto lancamentoDto = new LancamentoDto();
 		lancamentoDto.setId(null);
-		lancamentoDto.setData(DATA);
+		lancamentoDto.setData(LocalDateTime.parse(DATA.toString(), DateTimeFormatter.ISO_DATE_TIME));
 		lancamentoDto.setTipo(TIPO);
 		lancamentoDto.setFuncionarioId(ID_FUNCIONARIO);
 		ObjectMapper mapper = new ObjectMapper();

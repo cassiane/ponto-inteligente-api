@@ -2,6 +2,7 @@ package com.project.pontointeligente.api.repositories;
 
 import static org.junit.Assert.assertEquals;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -89,7 +90,7 @@ public class LancamentoRepositoryTest {
 	
 	public Lancamento obterDadosLancamento(Funcionario funcionario){
 		Lancamento lancamento = new Lancamento();
-		lancamento.setData(LocalDateTime.now());
+		lancamento.setData(Timestamp.valueOf(LocalDateTime.now()));
 		lancamento.setTipo(TipoEnum.INICIO_ALMOCO);
 		lancamento.setFuncionario(funcionario);
 		return lancamento;

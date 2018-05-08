@@ -58,7 +58,7 @@ public class AuthenticationController {
 	public ResponseEntity<Response<TokenDto>> gerarTokenJwt(
 			@Valid @RequestBody JwtAuthenticationDto authenticationDto, BindingResult result)
 			throws AuthenticationException {
-		Response<TokenDto> response = new Response<TokenDto>();
+		Response<TokenDto> response = new Response<>();
 
 		if (result.hasErrors()) {
 			log.error("Erro validando lançamento: {}", result.getAllErrors());

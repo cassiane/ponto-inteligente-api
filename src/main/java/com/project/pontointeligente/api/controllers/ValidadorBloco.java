@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class NoobChain {
+public class ValidadorBloco {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NoobChain.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidadorBloco.class);
 
     public static Boolean isChainValid(List<Lancamento> blockchain) {
         Lancamento currentBlock;
