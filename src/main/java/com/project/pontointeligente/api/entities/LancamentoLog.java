@@ -1,5 +1,6 @@
 package com.project.pontointeligente.api.entities;
 
+import com.google.common.base.MoreObjects;
 import com.project.pontointeligente.api.enums.OperacaoEnum;
 import com.project.pontointeligente.api.enums.TipoEnum;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Objects;
 
 import static javax.persistence.TemporalType.TIMESTAMP;
 
@@ -26,7 +28,7 @@ public class LancamentoLog {
     private OperacaoEnum operacao;
     private Long idLancamentoAlterado;
 
-    public LancamentoLog(Lancamento lancamento) {
+    public LancamentoLog(Lancamento lancamento, OperacaoEnum operacao) {
         this.data = lancamento.getData();
         this.descricao = lancamento.getDescricao();
         this.dataCriacao = lancamento.getDataCriacao();
@@ -36,21 +38,7 @@ public class LancamentoLog {
         this.hash = lancamento.getHash();
         this.previousHash = lancamento.getPreviousHash();
         this.idLancamentoAlterado = lancamento.getId();
-    }
-
-    public LancamentoLog(Timestamp data, String descricao, Timestamp dataCriacao, Timestamp dataAtualizacao,
-                         TipoEnum tipo, Funcionario funcionario, String hash, String previousHash, OperacaoEnum operacao,
-                         Long idLancamentoAlterado) {
-        this.data = data;
-        this.descricao = descricao;
-        this.dataCriacao = dataCriacao;
-        this.dataAtualizacao = dataAtualizacao;
-        this.tipo = tipo;
-        this.funcionario = funcionario;
-        this.hash = hash;
-        this.previousHash = previousHash;
         this.operacao = operacao;
-        this.idLancamentoAlterado = idLancamentoAlterado;
     }
 
     @Id
@@ -155,14 +143,43 @@ public class LancamentoLog {
         this.idLancamentoAlterado = idLancamentoAlterado;
     }
 
-    @PreUpdate
-    public void preUpdate(){
-        operacao = OperacaoEnum.ALTERACAO;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LancamentoLog)) return false;
+        LancamentoLog that = (LancamentoLog) o;
+        return com.google.common.base.Objects.equal(getId(), that.getId()) &&
+                com.google.common.base.Objects.equal(getData(), that.getData()) &&
+                com.google.common.base.Objects.equal(getDescricao(), that.getDescricao()) &&
+                com.google.common.base.Objects.equal(getDataCriacao(), that.getDataCriacao()) &&
+                com.google.common.base.Objects.equal(getDataAtualizacao(), that.getDataAtualizacao()) &&
+                getTipo() == that.getTipo() &&
+                com.google.common.base.Objects.equal(getFuncionario(), that.getFuncionario()) &&
+                com.google.common.base.Objects.equal(getHash(), that.getHash()) &&
+                com.google.common.base.Objects.equal(getPreviousHash(), that.getPreviousHash()) &&
+                getOperacao() == that.getOperacao() &&
+                com.google.common.base.Objects.equal(getIdLancamentoAlterado(), that.getIdLancamentoAlterado());
     }
 
-    @PrePersist
-    public void prePersist(){
-        operacao = OperacaoEnum.INCLUSAO;
+    @Override
+    public int hashCode() {
+        return com.google.common.base.Objects.hashCode(getId(), getData(), getDescricao(), getDataCriacao(), getDataAtualizacao(), getTipo(), getFuncionario(), getHash(), getPreviousHash(), getOperacao(), getIdLancamentoAlterado());
     }
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("data", data)
+                .add("descricao", descricao)
+                .add("dataCriacao", dataCriacao)
+                .add("dataAtualizacao", dataAtualizacao)
+                .add("tipo", tipo)
+                .add("funcionario", funcionario)
+                .add("hash", hash)
+                .add("previousHash", previousHash)
+                .add("operacao", operacao)
+                .add("idLancamentoAlterado", idLancamentoAlterado)
+                .toString();
+    }
 }

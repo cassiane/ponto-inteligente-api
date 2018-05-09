@@ -6,6 +6,7 @@ import com.project.pontointeligente.api.dtos.LancamentoDto;
 import com.project.pontointeligente.api.entities.Funcionario;
 import com.project.pontointeligente.api.entities.Lancamento;
 import com.project.pontointeligente.api.entities.LancamentoLog;
+import com.project.pontointeligente.api.enums.OperacaoEnum;
 import com.project.pontointeligente.api.exceptions.InfraestructureException;
 import com.project.pontointeligente.api.response.Response;
 import com.project.pontointeligente.api.services.FuncionarioService;
@@ -108,7 +109,7 @@ public class LancamentoController {
             if (ValidadorBloco.isChainValid(lancamentos)) {
                 lancamento = this.lancamentoServiceRepository.persistir(lancamento);
                 response.setData(lancamentoParaDto.convert(lancamento));
-                LancamentoLog log = new LancamentoLog(lancamento);
+                LancamentoLog log = new LancamentoLog(lancamento, OperacaoEnum.INCLUSAO);
                 this.lancamentoServiceRepository.persistir(log);
                 return ResponseEntity.ok(response);
             } else {
@@ -132,6 +133,8 @@ public class LancamentoController {
 		Optional<Lancamento> lanc = this.lancamentoServiceRepository.buscarPorId(lancamentoDto.getId().get());
 		Lancamento lancamento = dtoParaLancamento.convert(lancamentoDto, result, lanc);
 		lancamento = lancamentoServiceRepository.persistir(lancamento);
+		LancamentoLog log = new LancamentoLog(lancamento, OperacaoEnum.ALTERACAO);
+		this.lancamentoServiceRepository.persistir(log);
 		response.setData(lancamentoParaDto.convert(lancamento));
 		return ResponseEntity.ok(response);
 	}
