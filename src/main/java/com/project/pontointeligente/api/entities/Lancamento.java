@@ -133,14 +133,13 @@ public class Lancamento implements Serializable {
 	public void prePersist(){
         final Timestamp atual = Timestamp.valueOf(LocalDateTime.now());
         dataAtualizacao = atual;
-        dataCriacao = atual;
 	}
 
     public String calculateHash() {
 	    LOGGER.info("Calculando hash dos dados: cpf: {}, data: {}", this.getFuncionario().getCpf(), data.toString());
 		return HashUtils.applySha256(
                         funcionario.getCpf() +
-								data.toString()
+								dataCriacao.toString()
         );
     }
 

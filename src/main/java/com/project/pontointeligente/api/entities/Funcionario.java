@@ -34,7 +34,7 @@ public class Funcionario implements Serializable {
 	private static final long serialVersionUID = 3486088513568300015L;
 
 	private Long id;
-	private String nome, email, senha, cpf;
+	private String nome, email, senha, cpf, senhaAssinatura;
 	private BigDecimal valorHora;
 	private Float qtdHorasTrabalhoDia, qtdHorasAlmoco;
 	private PerfilEnum perfil;
@@ -78,7 +78,16 @@ public class Funcionario implements Serializable {
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
-	
+
+	@Column(name = "senha_assinatura", nullable = false)
+	public String getSenhaAssinatura() {
+		return senhaAssinatura;
+	}
+
+	public void setSenhaAssinatura(String senhaAssinatura) {
+		this.senhaAssinatura = senhaAssinatura;
+	}
+
 	@Column(name = "cpf", nullable = false)
 	public String getCpf() {
 		return cpf;

@@ -1,0 +1,1 @@
+alter table funcionario add senha_assinatura varchar(255) default null
