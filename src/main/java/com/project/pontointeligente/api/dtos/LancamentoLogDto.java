@@ -12,6 +12,8 @@ public class LancamentoLogDto {
 
 	private Optional<Long> id = Optional.empty();
 	private LocalDateTime data;
+	private LocalDateTime dataCriacao;
+	private LocalDateTime dataAtualizacao;
 	private String tipo;
 	private String descricao;
 	private Long funcionarioId;
@@ -36,6 +38,24 @@ public class LancamentoLogDto {
 
 	public void setData(LocalDateTime data) {
 		this.data = data;
+	}
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	public LocalDateTime getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(LocalDateTime dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	public LocalDateTime getDataAtualizacao() {
+		return dataAtualizacao;
+	}
+
+	public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+		this.dataAtualizacao = dataAtualizacao;
 	}
 
 	public String getTipo() {
@@ -85,6 +105,8 @@ public class LancamentoLogDto {
 		LancamentoLogDto that = (LancamentoLogDto) o;
 		return Objects.equal(id, that.id) &&
 				Objects.equal(data, that.data) &&
+				Objects.equal(dataCriacao, that.dataCriacao) &&
+				Objects.equal(dataAtualizacao, that.dataAtualizacao) &&
 				Objects.equal(tipo, that.tipo) &&
 				Objects.equal(descricao, that.descricao) &&
 				Objects.equal(funcionarioId, that.funcionarioId) &&
@@ -94,7 +116,7 @@ public class LancamentoLogDto {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(id, data, tipo, descricao, funcionarioId, hash, operacao);
+		return Objects.hashCode(id, data, dataCriacao, dataAtualizacao, tipo, descricao, funcionarioId, hash, operacao);
 	}
 
 	@Override
@@ -102,6 +124,8 @@ public class LancamentoLogDto {
 		return MoreObjects.toStringHelper(this)
 				.add("id", id)
 				.add("data", data)
+				.add("dataCriacao", dataCriacao)
+				.add("dataAtualizacao", dataAtualizacao)
 				.add("tipo", tipo)
 				.add("descricao", descricao)
 				.add("funcionarioId", funcionarioId)

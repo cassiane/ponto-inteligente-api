@@ -15,6 +15,8 @@ public class ConverterLancamentoLogParaLancamentoLogDto implements Converter<Lan
         LancamentoLogDto lancamentoLogDto = new LancamentoLogDto();
         lancamentoLogDto.setId(Optional.of(lancamentoLog.getId()));
         lancamentoLogDto.setData(lancamentoLog.getData().toLocalDateTime());
+        lancamentoLogDto.setDataCriacao(lancamentoLog.getDataCriacao() != null ? lancamentoLog.getDataCriacao().toLocalDateTime() : null);
+        lancamentoLogDto.setDataAtualizacao(lancamentoLog.getDataAtualizacao() != null ? lancamentoLog.getDataAtualizacao().toLocalDateTime() : null);
         lancamentoLogDto.setTipo(lancamentoLog.getTipo().toString());
         lancamentoLogDto.setDescricao(lancamentoLog.getDescricao());
         lancamentoLogDto.setFuncionarioId(lancamentoLog.getFuncionario().getId());
