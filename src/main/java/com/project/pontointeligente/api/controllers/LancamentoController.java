@@ -90,10 +90,10 @@ public class LancamentoController {
 	        if (funcionario.getSenhaAssinatura().isEmpty()) {
 	            //é necessário informar uma senha para assinatura em seu cadastro.
             } else if (funcionario.getSenhaAssinatura().equals(assinaturaDto.getSenha())) {
-	            
+
             }
         }
-
+        return null;
     }
 
 	@PostMapping
