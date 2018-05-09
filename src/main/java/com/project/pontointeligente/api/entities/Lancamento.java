@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.project.pontointeligente.api.enums.TipoEnum;
 import com.project.pontointeligente.api.utils.HashUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.annotations.Where;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,12 +12,10 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
-
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(name = "lancamento")
+@Where(clause = "ativo = 1")
 public class Lancamento implements Serializable {
 
 	private static final long serialVersionUID = 236188582712441484L;
@@ -32,6 +30,7 @@ public class Lancamento implements Serializable {
 	private Funcionario funcionario;
     private String hash;
     private String previousHash;
+    private Boolean ativo;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -116,6 +115,15 @@ public class Lancamento implements Serializable {
 		this.dataAtualizacao = dataAtualizacao;
 	}
 
+	@Column(name = "ativo")
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
+
 	@PreUpdate
 	public void preUpdate(){
 		dataAtualizacao = Timestamp.valueOf(LocalDateTime.now());
@@ -136,26 +144,27 @@ public class Lancamento implements Serializable {
         );
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Lancamento)) return false;
-        Lancamento that = (Lancamento) o;
-        return Objects.equal(getId(), that.getId()) &&
-                Objects.equal(getData(), that.getData()) &&
-                Objects.equal(getDescricao(), that.getDescricao()) &&
-                Objects.equal(getDataCriacao(), that.getDataCriacao()) &&
-                Objects.equal(getDataAtualizacao(), that.getDataAtualizacao()) &&
-                getTipo() == that.getTipo() &&
-                Objects.equal(getFuncionario(), that.getFuncionario()) &&
-                Objects.equal(getHash(), that.getHash()) &&
-                Objects.equal(getPreviousHash(), that.getPreviousHash());
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Lancamento that = (Lancamento) o;
+		return Objects.equal(id, that.id) &&
+				Objects.equal(data, that.data) &&
+				Objects.equal(descricao, that.descricao) &&
+				Objects.equal(dataCriacao, that.dataCriacao) &&
+				Objects.equal(dataAtualizacao, that.dataAtualizacao) &&
+				tipo == that.tipo &&
+				Objects.equal(funcionario, that.funcionario) &&
+				Objects.equal(hash, that.hash) &&
+				Objects.equal(previousHash, that.previousHash) &&
+				Objects.equal(ativo, that.ativo);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId(), getData(), getDescricao(), getDataCriacao(), getDataAtualizacao(), getTipo(), getFuncionario(), getHash(), getPreviousHash());
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id, data, descricao, dataCriacao, dataAtualizacao, tipo, funcionario, hash, previousHash, ativo);
+	}
 
 	@Override
 	public String toString() {
@@ -169,6 +178,7 @@ public class Lancamento implements Serializable {
 				.add("funcionario", funcionario)
 				.add("hash", hash)
 				.add("previousHash", previousHash)
+				.add("ativo", ativo)
 				.toString();
 	}
 }

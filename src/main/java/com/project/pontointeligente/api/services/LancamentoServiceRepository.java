@@ -18,7 +18,7 @@ public interface LancamentoServiceRepository {
 
 	LancamentoLog persistir(LancamentoLog lancamentoLog);
 
-	void remover(Long id);
+	void remover(Lancamento lancamento);
 
 	List<Lancamento> buscarUltimosLancamentos();
 }

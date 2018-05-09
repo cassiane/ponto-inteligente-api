@@ -1,16 +1,12 @@
 package com.project.pontointeligente.api.entities;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.project.pontointeligente.api.enums.OperacaoEnum;
 import com.project.pontointeligente.api.enums.TipoEnum;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Objects;
-
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(name = "lancamentolog")
@@ -27,6 +23,7 @@ public class LancamentoLog {
     private String previousHash;
     private OperacaoEnum operacao;
     private Long idLancamentoAlterado;
+    private Boolean ativo;
 
     public LancamentoLog(Lancamento lancamento, OperacaoEnum operacao) {
         this.data = lancamento.getData();
@@ -39,6 +36,7 @@ public class LancamentoLog {
         this.previousHash = lancamento.getPreviousHash();
         this.idLancamentoAlterado = lancamento.getId();
         this.operacao = operacao;
+        this.ativo = lancamento.getAtivo();
     }
 
     @Id
@@ -143,27 +141,35 @@ public class LancamentoLog {
         this.idLancamentoAlterado = idLancamentoAlterado;
     }
 
+    @Column(name = "ativo")
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof LancamentoLog)) return false;
         LancamentoLog that = (LancamentoLog) o;
-        return com.google.common.base.Objects.equal(getId(), that.getId()) &&
-                com.google.common.base.Objects.equal(getData(), that.getData()) &&
-                com.google.common.base.Objects.equal(getDescricao(), that.getDescricao()) &&
-                com.google.common.base.Objects.equal(getDataCriacao(), that.getDataCriacao()) &&
-                com.google.common.base.Objects.equal(getDataAtualizacao(), that.getDataAtualizacao()) &&
+        return Objects.equal(getId(), that.getId()) &&
+                Objects.equal(getData(), that.getData()) &&
+                Objects.equal(getDescricao(), that.getDescricao()) &&
+                Objects.equal(getDataCriacao(), that.getDataCriacao()) &&
+                Objects.equal(getDataAtualizacao(), that.getDataAtualizacao()) &&
                 getTipo() == that.getTipo() &&
-                com.google.common.base.Objects.equal(getFuncionario(), that.getFuncionario()) &&
-                com.google.common.base.Objects.equal(getHash(), that.getHash()) &&
-                com.google.common.base.Objects.equal(getPreviousHash(), that.getPreviousHash()) &&
+                Objects.equal(getFuncionario(), that.getFuncionario()) &&
+                Objects.equal(getHash(), that.getHash()) &&
+                Objects.equal(getPreviousHash(), that.getPreviousHash()) &&
                 getOperacao() == that.getOperacao() &&
-                com.google.common.base.Objects.equal(getIdLancamentoAlterado(), that.getIdLancamentoAlterado());
+                Objects.equal(getIdLancamentoAlterado(), that.getIdLancamentoAlterado());
     }
 
     @Override
     public int hashCode() {
-        return com.google.common.base.Objects.hashCode(getId(), getData(), getDescricao(), getDataCriacao(), getDataAtualizacao(), getTipo(), getFuncionario(), getHash(), getPreviousHash(), getOperacao(), getIdLancamentoAlterado());
+        return Objects.hashCode(getId(), getData(), getDescricao(), getDataCriacao(), getDataAtualizacao(), getTipo(), getFuncionario(), getHash(), getPreviousHash(), getOperacao(), getIdLancamentoAlterado());
     }
 
     @Override

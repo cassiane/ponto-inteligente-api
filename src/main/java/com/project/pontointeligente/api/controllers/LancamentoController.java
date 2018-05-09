@@ -168,7 +168,7 @@ public class LancamentoController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		this.lancamentoServiceRepository.remover(id);
+		this.lancamentoServiceRepository.remover(lancamento.get());
 		return ResponseEntity.ok(new Response<String>());
 	}
 
