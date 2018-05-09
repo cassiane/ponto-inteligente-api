@@ -4,11 +4,7 @@ import com.project.pontointeligente.api.enums.OperacaoEnum;
 import com.project.pontointeligente.api.enums.TipoEnum;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
-
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(name = "lancamentolog")
@@ -25,6 +21,7 @@ public class LancamentoLog {
     private String previousHash;
     private OperacaoEnum operacao;
     private Long idLancamentoAlterado;
+    private Boolean ativo;
 
     public LancamentoLog(Lancamento lancamento) {
         this.data = lancamento.getData();
@@ -36,6 +33,7 @@ public class LancamentoLog {
         this.hash = lancamento.getHash();
         this.previousHash = lancamento.getPreviousHash();
         this.idLancamentoAlterado = lancamento.getId();
+        this.ativo = lancamento.getAtivo();
     }
 
     public LancamentoLog(Timestamp data, String descricao, Timestamp dataCriacao, Timestamp dataAtualizacao,
@@ -51,6 +49,7 @@ public class LancamentoLog {
         this.previousHash = previousHash;
         this.operacao = operacao;
         this.idLancamentoAlterado = idLancamentoAlterado;
+        this.ativo = true;
     }
 
     @Id
@@ -153,6 +152,15 @@ public class LancamentoLog {
 
     public void setIdLancamentoAlterado(Long idLancamentoAlterado) {
         this.idLancamentoAlterado = idLancamentoAlterado;
+    }
+
+    @Column(name = "ativo")
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 
     @PreUpdate
