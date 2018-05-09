@@ -25,6 +25,9 @@ public class LancamentoLog {
     private Long idLancamentoAlterado;
     private Boolean ativo;
 
+    public LancamentoLog() {
+    }
+
     public LancamentoLog(Lancamento lancamento, OperacaoEnum operacao) {
         this.data = lancamento.getData();
         this.descricao = lancamento.getDescricao();

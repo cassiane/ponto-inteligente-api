@@ -1,8 +1,10 @@
 package com.project.pontointeligente.api.controllers;
 
 import com.project.pontointeligente.api.converter.ConverterLancamentoDtoParaLancamento;
+import com.project.pontointeligente.api.converter.ConverterLancamentoLogParaLancamentoLogDto;
 import com.project.pontointeligente.api.converter.ConverterLancamentoParaLancamentoDto;
 import com.project.pontointeligente.api.dtos.LancamentoDto;
+import com.project.pontointeligente.api.dtos.LancamentoLogDto;
 import com.project.pontointeligente.api.entities.Funcionario;
 import com.project.pontointeligente.api.entities.Lancamento;
 import com.project.pontointeligente.api.entities.LancamentoLog;
@@ -10,6 +12,7 @@ import com.project.pontointeligente.api.enums.OperacaoEnum;
 import com.project.pontointeligente.api.exceptions.InfraestructureException;
 import com.project.pontointeligente.api.response.Response;
 import com.project.pontointeligente.api.services.FuncionarioService;
+import com.project.pontointeligente.api.services.LancamentoLogServiceRepository;
 import com.project.pontointeligente.api.services.LancamentoServiceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,19 +41,23 @@ public class LancamentoController {
 	private static final Logger log = LoggerFactory.getLogger(LancamentoController.class);
 
 	private LancamentoServiceRepository lancamentoServiceRepository;
+	private LancamentoLogServiceRepository lancamentoLogServiceRepository;
 	private FuncionarioService funcionarioService;
 	private ConverterLancamentoDtoParaLancamento dtoParaLancamento;
 	private ConverterLancamentoParaLancamentoDto lancamentoParaDto;
+	private ConverterLancamentoLogParaLancamentoLogDto lancamentoLogParaDto;
 
 	@Value("${paginacao.qtd_por_pagina}")
 	private int qtdPorPagina;
 
 	@Autowired
-	public LancamentoController(LancamentoServiceRepository lancamentoServiceRepository, FuncionarioService funcionarioService, ConverterLancamentoDtoParaLancamento dtoParaLancamento, ConverterLancamentoParaLancamentoDto lancamentoParaDto) {
+	public LancamentoController(LancamentoServiceRepository lancamentoServiceRepository, LancamentoLogServiceRepository lancamentoLogServiceRepository, FuncionarioService funcionarioService, ConverterLancamentoDtoParaLancamento dtoParaLancamento, ConverterLancamentoParaLancamentoDto lancamentoParaDto, ConverterLancamentoLogParaLancamentoLogDto lancamentoLogParaDto) {
 		this.lancamentoServiceRepository = lancamentoServiceRepository;
+		this.lancamentoLogServiceRepository = lancamentoLogServiceRepository;
 		this.funcionarioService = funcionarioService;
 		this.dtoParaLancamento = dtoParaLancamento;
 		this.lancamentoParaDto = lancamentoParaDto;
+		this.lancamentoLogParaDto = lancamentoLogParaDto;
 	}
 
 	public void CRUD(String operacao) {
@@ -195,6 +202,23 @@ public class LancamentoController {
 		Page<LancamentoDto> lancamentosDto = lancamentos.map(lancamento -> this.lancamentoParaDto.convert(lancamento));
 
 		response.setData(lancamentosDto);
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping(value = "/{id}/auditoria")
+	public ResponseEntity<Response<Page<LancamentoLogDto>>> auditoria(
+			@PathVariable("id") Long idLancamentoAlterado,
+			@RequestParam(value = "pag", defaultValue = "0") int pag,
+			@RequestParam(value = "ord", defaultValue = "id") String ord,
+			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
+		log.info("Buscando historico para ID do lancamento: {}, página: {}", idLancamentoAlterado, pag);
+		Response<Page<LancamentoLogDto>> response = new Response<>();
+
+		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina, Direction.valueOf(dir), ord);
+		Page<LancamentoLog> logs = this.lancamentoLogServiceRepository.buscarPorIdLancamentoAlterado(idLancamentoAlterado, pageRequest);
+		Page<LancamentoLogDto> lancamentosLogDto = logs.map(log -> this.lancamentoLogParaDto.convert(log));
+
+		response.setData(lancamentosLogDto);
 		return ResponseEntity.ok(response);
 	}
 }
