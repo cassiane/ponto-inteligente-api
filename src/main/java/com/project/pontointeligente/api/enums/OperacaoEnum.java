@@ -2,7 +2,8 @@ package com.project.pontointeligente.api.enums;
 
 public enum OperacaoEnum {
     INCLUSAO("I"),
-    ALTERACAO("A");
+    ALTERACAO("A"),
+    EXCLUSAO("E");
 
     private String operacao;
 

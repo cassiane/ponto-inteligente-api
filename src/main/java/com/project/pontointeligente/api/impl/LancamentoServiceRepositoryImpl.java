@@ -2,6 +2,7 @@ package com.project.pontointeligente.api.impl;
 
 import com.project.pontointeligente.api.entities.Lancamento;
 import com.project.pontointeligente.api.entities.LancamentoLog;
+import com.project.pontointeligente.api.enums.OperacaoEnum;
 import com.project.pontointeligente.api.repositories.LancamentoLogRepository;
 import com.project.pontointeligente.api.repositories.LancamentoRepository;
 import com.project.pontointeligente.api.services.LancamentoServiceRepository;
@@ -52,7 +53,7 @@ public class LancamentoServiceRepositoryImpl implements LancamentoServiceReposit
         LOGGER.info("Excluindo o lançamento de id: {}", lancamento.getId());
         lancamento.setAtivo(false);
 	    Lancamento lancamentoSalvo = lancamentoRepository.save(lancamento);
-	    LancamentoLog log = new LancamentoLog(lancamentoSalvo);
+	    LancamentoLog log = new LancamentoLog(lancamentoSalvo, OperacaoEnum.EXCLUSAO);
 		lancamentoLogRepository.save(log);
     }
 
