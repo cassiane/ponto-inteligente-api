@@ -1,5 +1,7 @@
 package com.project.pontointeligente.api.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.project.pontointeligente.api.dtos.LancamentoDto;
@@ -60,21 +62,23 @@ public class FuncionarioServiceImpl implements FuncionarioService{
 	}
 
 	@Override
-	public BindingResult validarFuncionarioNoLancamento(LancamentoDto lancamentoDto, BindingResult result, Optional<Funcionario> funcionario) {
-		LOGGER.info("Validando funcionário id {}: ", lancamentoDto.getFuncionarioId());
+	public List<ObjectError> validarFuncionarioNoLancamento(Long idFuncionarioLancamento, Optional<Funcionario> funcionario) {
+		LOGGER.info("Validando funcionário id {}: ", idFuncionarioLancamento);
 		Authentication autentication = SecurityContextHolder.getContext().getAuthentication();
 		JwtUser usuarioAutenticado = (JwtUser) autentication.getPrincipal();
 
-		if (lancamentoDto.getFuncionarioId() == null) {
-			result.addError(new ObjectError(FUNCIONARIO, "Funcionário não informado."));
+		List<ObjectError> result = new ArrayList<>();
+
+		if (idFuncionarioLancamento == null) {
+			result.add(new ObjectError(FUNCIONARIO, "Funcionário não informado."));
 		}
 
 		if (!funcionario.isPresent()) {
-			result.addError(new ObjectError(FUNCIONARIO, "Funcionário não encontrado. ID inexistente."));
+			result.add(new ObjectError(FUNCIONARIO, "Funcionário não encontrado. ID inexistente."));
 		}
 
 		if (!usuarioAutenticado.getUsername().equals(funcionario.get().getEmail())) {
-			result.addError(new ObjectError(FUNCIONARIO, "Funcionário informado é diferente do usuário autenticado."));
+			result.add(new ObjectError(FUNCIONARIO, "Funcionário informado é diferente do usuário autenticado."));
 		}
 
 		LOGGER.info("Resultado da validação: {}", result);

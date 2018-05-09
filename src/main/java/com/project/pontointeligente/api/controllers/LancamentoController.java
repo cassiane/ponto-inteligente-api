@@ -19,9 +19,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -93,7 +93,7 @@ public class LancamentoController {
 		log.info("Adicionando lançamento: {}", lancamentoDto.toString());
 		Response<LancamentoDto> response = new Response<>();
 		Optional<Funcionario> funcionario = funcionarioService.buscarPorId(lancamentoDto.getFuncionarioId());
-		if (isFuncionarioValido(lancamentoDto, result, response, funcionario))
+		if (isFuncionarioInvalido(lancamentoDto, result, response, funcionario))
 			return ResponseEntity.badRequest().body(response);
 
 		Lancamento lancamento = dtoParaLancamento.convert(lancamentoDto, result, Optional.empty());
@@ -126,7 +126,7 @@ public class LancamentoController {
 		log.info("Atualizando lançamento: {}", lancamentoDto.toString());
 		Response<LancamentoDto> response = new Response<>();
 		Optional<Funcionario> funcionario = funcionarioService.buscarPorId(lancamentoDto.getFuncionarioId());
-		if (isFuncionarioValido(lancamentoDto, result, response, funcionario))
+		if (isFuncionarioInvalido(lancamentoDto, result, response, funcionario))
 			return ResponseEntity.badRequest().body(response);
 
 		lancamentoDto.setId(Optional.of(id));
@@ -139,13 +139,16 @@ public class LancamentoController {
 		return ResponseEntity.ok(response);
 	}
 
-	private boolean isFuncionarioValido(@Valid @RequestBody LancamentoDto lancamentoDto, BindingResult result,
-										Response<LancamentoDto> response, Optional<Funcionario> funcionario) {
-		funcionarioService.validarFuncionarioNoLancamento(lancamentoDto, result, funcionario);
+	private boolean isFuncionarioInvalido(@Valid @RequestBody LancamentoDto lancamentoDto, BindingResult result,
+										  Response<LancamentoDto> response, Optional<Funcionario> funcionario) {
+		List<ObjectError> erros = funcionarioService.validarFuncionarioNoLancamento(lancamentoDto.getFuncionarioId(), funcionario);
 
-		if (result.hasErrors()) {
-			log.error("Erro validando lançamento: {}", result.getAllErrors());
-			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+		if (erros.size() > 0) {
+			log.error("Erro validando lançamento: {}", erros);
+			erros.forEach(erro -> {
+				result.addError(erro);
+				response.getErrors().add(erro.getDefaultMessage());
+			});
 			return true;
 		}
 		return false;
@@ -156,7 +159,7 @@ public class LancamentoController {
     }
 
 	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN')")
+//	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<Response<String>> remover(@PathVariable("id") Long id) {
 		log.info("Removendo lançamento: {}", id);
 		Response<String> response = new Response<>();
@@ -166,6 +169,13 @@ public class LancamentoController {
 			log.info("Erro ao remover devido ao lançamento ID: {} ser inválido.", id);
 			response.getErrors().add("Erro ao remover lançamento. Registro não encontrado para o id " + id);
 			return ResponseEntity.badRequest().body(response);
+		} else {
+			Funcionario funcionarioLancamento = lancamento.get().getFuncionario();
+			List<ObjectError> erros = funcionarioService.validarFuncionarioNoLancamento(funcionarioLancamento.getId(), Optional.of(funcionarioLancamento));
+			if (erros.size() > 0) {
+				erros.forEach(erro -> response.getErrors().add(erro.getDefaultMessage()));
+				return ResponseEntity.badRequest().body(response);
+			}
 		}
 
 		this.lancamentoServiceRepository.remover(lancamento.get());
