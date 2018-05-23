@@ -1,31 +1,15 @@
 package com.project.pontointeligente.api.entities;
 
+import com.google.common.base.Objects;
+import com.project.pontointeligente.api.enums.PerfilEnum;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-import com.project.pontointeligente.api.enums.PerfilEnum;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "funcionario")
@@ -202,14 +186,15 @@ public class Funcionario implements Serializable {
 		if (this == o) return true;
 		if (!(o instanceof Funcionario)) return false;
 		Funcionario that = (Funcionario) o;
-		return Float.compare(that.getQtdHorasTrabalhoDia(), getQtdHorasTrabalhoDia()) == 0 &&
-				Float.compare(that.getQtdHorasAlmoco(), getQtdHorasAlmoco()) == 0 &&
-				Objects.equal(getId(), that.getId()) &&
+		return Objects.equal(getId(), that.getId()) &&
 				Objects.equal(getNome(), that.getNome()) &&
 				Objects.equal(getEmail(), that.getEmail()) &&
 				Objects.equal(getSenha(), that.getSenha()) &&
 				Objects.equal(getCpf(), that.getCpf()) &&
+				Objects.equal(getSenhaAssinatura(), that.getSenhaAssinatura()) &&
 				Objects.equal(getValorHora(), that.getValorHora()) &&
+				Objects.equal(getQtdHorasTrabalhoDia(), that.getQtdHorasTrabalhoDia()) &&
+				Objects.equal(getQtdHorasAlmoco(), that.getQtdHorasAlmoco()) &&
 				getPerfil() == that.getPerfil() &&
 				Objects.equal(getDataCriacao(), that.getDataCriacao()) &&
 				Objects.equal(getDataAtualizacao(), that.getDataAtualizacao()) &&
@@ -219,10 +204,10 @@ public class Funcionario implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(getId(), getNome(), getEmail(), getSenha(), getCpf(), getValorHora(), getQtdHorasTrabalhoDia(), getQtdHorasAlmoco(), getPerfil(), getDataCriacao(), getDataAtualizacao(), getEmpresa(), getLancamentos());
+		return Objects.hashCode(getId(), getNome(), getEmail(), getSenha(), getCpf(), getSenhaAssinatura(), getValorHora(), getQtdHorasTrabalhoDia(), getQtdHorasAlmoco(), getPerfil(), getDataCriacao(), getDataAtualizacao(), getEmpresa(), getLancamentos());
 	}
 
-    @Override
+	@Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)

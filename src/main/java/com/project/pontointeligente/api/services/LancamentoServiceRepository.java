@@ -20,5 +20,5 @@ public interface LancamentoServiceRepository {
 
 	void remover(Lancamento lancamento);
 
-	List<Lancamento> buscarUltimosLancamentos();
+	List<Lancamento> buscarUltimosLancamentos(Long idLancamento);
 }

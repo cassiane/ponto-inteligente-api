@@ -107,19 +107,6 @@
 			<version>0.7.0</version>
 		</dependency>
 		
-		<!-- Swagger e Swagger UI -->
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.6.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.6.1</version>
-		</dependency>
-		
 		<!-- EhCache -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -133,7 +120,20 @@
             <version>2.8.2</version>
         </dependency>
 
-    </dependencies>
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>23.0</version>
+		</dependency>
+
+
+	</dependencies>
 
 	<build>
 		<plugins>

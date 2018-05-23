@@ -23,6 +23,6 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long> {
 	//Lançamento paginados
 	Page<Lancamento> findByFuncionarioId(@Param("funcionarioId") Long funcionarioId, Pageable pageable);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM lancamento lanc LIMIT 0,25")
-    List<Lancamento> findTop25();
+    @Query(nativeQuery = true, value = "SELECT * FROM lancamento lanc where :lancamentoId = 0 or id <= :lancamentoId LIMIT 0,25 ")
+    List<Lancamento> findTop25ByOptionalId(@Param("lancamentoId") Long lancamentoId);
 }

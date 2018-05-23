@@ -2,11 +2,15 @@ package com.project.pontointeligente.api.entities;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import com.project.pontointeligente.api.dtos.CrudDto;
 import com.project.pontointeligente.api.enums.TipoEnum;
 import com.project.pontointeligente.api.utils.HashUtils;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.hibernate.annotations.Where;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -31,7 +35,20 @@ public class Lancamento implements Serializable {
     private String hash;
     private String previousHash;
     private Boolean ativo;
-	
+
+	@Value(value = "${jwt.secred}")
+	private String senhaAssinatura;
+
+	public Lancamento(CrudDto crudDto) {
+		Lancamento lancamento = crudDto.getLancamento();
+		lancamento.setFuncionario(crudDto.getFuncionario().get());
+		lancamento.setAtivo(true);
+		lancamento.setDataCriacao(Timestamp.valueOf(LocalDateTime.now()));
+	}
+
+	public Lancamento() {
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public Long getId() {
@@ -136,11 +153,14 @@ public class Lancamento implements Serializable {
 	}
 
     public String calculateHash() {
-	    LOGGER.info("Calculando hash dos dados: cpf: {}, data: {}", this.getFuncionario().getCpf(), data.toString());
-		return HashUtils.applySha256(
-                        funcionario.getCpf() +
-								dataCriacao.toString()
-        );
+		return Jwts.builder().setPayload(data.toString())
+				.signWith(SignatureAlgorithm.HS256, senhaAssinatura).compact();
+
+//	    LOGGER.info("Calculando hash dos dados: cpf: {}, tipo: {}", this.getFuncionario().getCpf(), tipo.name());
+//		return HashUtils.applySha256(
+//                        funcionario.getCpf() +
+//								tipo.name()
+//        );
     }
 
 	@Override

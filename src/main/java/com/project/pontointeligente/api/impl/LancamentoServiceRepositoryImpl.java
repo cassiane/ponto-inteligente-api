@@ -24,11 +24,14 @@ public class LancamentoServiceRepositoryImpl implements LancamentoServiceReposit
 
     public static Logger LOGGER = LoggerFactory.getLogger(LancamentoServiceRepositoryImpl.class);
 
-	@Autowired
 	private LancamentoRepository lancamentoRepository;
+	private LancamentoLogRepository lancamentoLogRepository;
 
 	@Autowired
-    private LancamentoLogRepository lancamentoLogRepository;
+	public LancamentoServiceRepositoryImpl(LancamentoRepository lancamentoRepository, LancamentoLogRepository lancamentoLogRepository) {
+		this.lancamentoRepository = lancamentoRepository;
+		this.lancamentoLogRepository = lancamentoLogRepository;
+	}
 
 	public Page<Lancamento> buscarPorFuncionarioId(Long funcionarioId, PageRequest pageRequest) {
         LOGGER.info("Buscar lançamentos pelo id do funcionário: {}", funcionarioId);
@@ -57,10 +60,10 @@ public class LancamentoServiceRepositoryImpl implements LancamentoServiceReposit
 		lancamentoLogRepository.save(log);
     }
 
-    @Override
-    public List<Lancamento> buscarUltimosLancamentos() {
+	@Override
+    public List<Lancamento> buscarUltimosLancamentos(Long lancamentoId) {
         LOGGER.info("Buscando últimos 25 lançamentos");
-	    return lancamentoRepository.findTop25();
+	    return lancamentoRepository.findTop25ByOptionalId(lancamentoId);
     }
 
     @Cacheable("lancamentoPorId")

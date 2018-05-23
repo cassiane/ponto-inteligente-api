@@ -36,7 +36,7 @@ import com.project.pontointeligente.api.services.LancamentoServiceRepository;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class LancamentoControllerTest {
+public class LancamentoControllerPersistenciaTest {
 
 	@Autowired
 	private MockMvc mvc;

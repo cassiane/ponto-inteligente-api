@@ -10,7 +10,7 @@ public class ValidadorBloco {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidadorBloco.class);
 
-    public static Boolean isChainValid(List<Lancamento> blockchain) {
+    public static Boolean isChainValid(List<Lancamento> blockchain, String senha) {
         Lancamento currentBlock;
         Lancamento previousBlock;
 
@@ -19,7 +19,7 @@ public class ValidadorBloco {
             currentBlock = blockchain.get(i);
             previousBlock = blockchain.get(i - 1);
             //compare registered hash and calculated hash:
-            if (!currentBlock.getHash().equals(currentBlock.calculateHash())) {
+            if (!currentBlock.getHash().equals(currentBlock.calculateHash(senha))) {
                 LOGGER.error("Current Hashes not equal");
                 return false;
             }
