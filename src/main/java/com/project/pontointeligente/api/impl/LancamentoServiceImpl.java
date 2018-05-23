@@ -11,7 +11,6 @@ import com.project.pontointeligente.api.services.LancamentoServiceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
@@ -23,7 +22,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Service
 public class LancamentoServiceImpl  implements LancamentoService {
@@ -71,7 +69,7 @@ public class LancamentoServiceImpl  implements LancamentoService {
             lancamentos.add(lancamento);
             if (ValidadorBloco.isChainValid(lancamentos)) {
                 LOGGER.info("Bloco validado");
-                persistirLancamentoComLog(lancamento);
+                return persistirLancamentoComLog(lancamento);
             }
         }
 
