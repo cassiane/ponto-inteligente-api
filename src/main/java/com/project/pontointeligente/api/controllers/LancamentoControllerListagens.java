@@ -26,6 +26,9 @@ public class LancamentoControllerListagens {
     private ConverterLancamentoParaLancamentoDto lancamentoParaDto;
     private int qtdPorPagina;
 
+    @Value("${jwt.secret}")
+    private String senhaAssinatura;
+
     @Value("${paginacao.qtd_por_pagina}")
     public int getQtdPorPagina() {
         return qtdPorPagina;
