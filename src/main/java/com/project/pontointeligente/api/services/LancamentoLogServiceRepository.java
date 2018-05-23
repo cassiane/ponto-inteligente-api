@@ -10,6 +10,6 @@ import java.util.Optional;
 
 public interface LancamentoLogServiceRepository {
 	
-	Page<LancamentoLog> buscarPorIdLancamentoAlterado(Long lancamentoId, PageRequest pageRequest);
+	List<LancamentoLog> buscarPorIdLancamentoAlterado(Long lancamentoId);
 	
 }

@@ -36,9 +36,6 @@ public class Lancamento implements Serializable {
     private String previousHash;
     private Boolean ativo;
 
-	@Value(value = "${jwt.secred}")
-	private String senhaAssinatura;
-
 	public Lancamento(CrudDto crudDto) {
 		Lancamento lancamento = crudDto.getLancamento();
 		lancamento.setFuncionario(crudDto.getFuncionario().get());
@@ -153,37 +150,36 @@ public class Lancamento implements Serializable {
 	}
 
     public String calculateHash() {
-		return Jwts.builder().setPayload(data.toString())
-				.signWith(SignatureAlgorithm.HS256, senhaAssinatura).compact();
-
-//	    LOGGER.info("Calculando hash dos dados: cpf: {}, tipo: {}", this.getFuncionario().getCpf(), tipo.name());
-//		return HashUtils.applySha256(
-//                        funcionario.getCpf() +
-//								tipo.name()
-//        );
+	    LOGGER.info("Calculando hash dos dados: cpf: {}, data: {}, id:{}", this.getFuncionario().getCpf(), data.toString(), id);
+		return HashUtils.applySha256(
+                        funcionario.getCpf() +
+								data.toString()
+        );
     }
+
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (!(o instanceof Lancamento)) return false;
 		Lancamento that = (Lancamento) o;
-		return Objects.equal(id, that.id) &&
-				Objects.equal(data, that.data) &&
-				Objects.equal(descricao, that.descricao) &&
-				Objects.equal(dataCriacao, that.dataCriacao) &&
-				Objects.equal(dataAtualizacao, that.dataAtualizacao) &&
-				tipo == that.tipo &&
-				Objects.equal(funcionario, that.funcionario) &&
-				Objects.equal(hash, that.hash) &&
-				Objects.equal(previousHash, that.previousHash) &&
-				Objects.equal(ativo, that.ativo);
+		return Objects.equal(getId(), that.getId()) &&
+				Objects.equal(getData(), that.getData()) &&
+				Objects.equal(getDescricao(), that.getDescricao()) &&
+				Objects.equal(getDataCriacao(), that.getDataCriacao()) &&
+				Objects.equal(getDataAtualizacao(), that.getDataAtualizacao()) &&
+				getTipo() == that.getTipo() &&
+				Objects.equal(getFuncionario(), that.getFuncionario()) &&
+				Objects.equal(getHash(), that.getHash()) &&
+				Objects.equal(getPreviousHash(), that.getPreviousHash()) &&
+				Objects.equal(getAtivo(), that.getAtivo());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(id, data, descricao, dataCriacao, dataAtualizacao, tipo, funcionario, hash, previousHash, ativo);
+		return Objects.hashCode(getId(), getData(), getDescricao(), getDataCriacao(), getDataAtualizacao(), getTipo(), getFuncionario(), getHash(), getPreviousHash(), getAtivo());
 	}
+
 
 	@Override
 	public String toString() {

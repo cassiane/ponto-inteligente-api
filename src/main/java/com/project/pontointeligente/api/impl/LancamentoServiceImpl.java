@@ -28,11 +28,8 @@ import static java.util.Objects.nonNull;
 @Service
 public class LancamentoServiceImpl  implements LancamentoService {
 
-    public static Logger log = LoggerFactory.getLogger(LancamentoServiceImpl.class);
+    public static Logger LOGGER = LoggerFactory.getLogger(LancamentoServiceImpl.class);
     private LancamentoServiceRepository lancamentoServiceRepository;
-
-    @Value(value = "${jwt.secred}")
-    private String senhaAssinatura;
 
     @Autowired
     public LancamentoServiceImpl(LancamentoServiceRepository lancamentoServiceRepository) {
@@ -58,24 +55,27 @@ public class LancamentoServiceImpl  implements LancamentoService {
 
     @Override
     public Lancamento persistirLancamento(Lancamento lancamento) {
-        if (isNull(lancamento.getId())) {
-            List<Lancamento> lancamentos = buscarPreviousHash(Long.valueOf(0));
-            if (!CollectionUtils.isEmpty(lancamentos)) {
+        List<Lancamento> lancamentos = buscarPreviousHash(Long.valueOf(0));
+        if (!CollectionUtils.isEmpty(lancamentos)) {
+            LOGGER.info("Persistindo lançamento");
+            if (isNull(lancamento.getId())) {
+                LOGGER.info("Persistindo lançamento inclusão");
+                lancamento.setAtivo(true);
+                lancamento.setDataCriacao(Timestamp.valueOf(LocalDateTime.now()));
+                lancamento.setHash(lancamento.calculateHash());
                 lancamento.setPreviousHash(Objects.requireNonNull(lancamentos.stream()
                         .reduce((first, second) -> second)
                         .orElse(null)).getHash());
-                lancamento.setAtivo(true);
-                lancamento.setDataCriacao(Timestamp.valueOf(LocalDateTime.now()));
-                lancamento.setHash(lancamento.calculateHash(senhaAssinatura));
-
-                lancamentos.add(lancamento);
-                if (ValidadorBloco.isChainValid(lancamentos, senhaAssinatura)) {
-                    persistirLancamentoComLog(lancamento);
-                }
+            }
+//d060900c0d5cdfa5d902d8806a52c68f8c7855174d2fb3f0ef035bcafa796fd0
+            lancamentos.add(lancamento);
+            if (ValidadorBloco.isChainValid(lancamentos)) {
+                LOGGER.info("Bloco validado");
+                persistirLancamentoComLog(lancamento);
             }
         }
 
-        return persistirLancamentoComLog(lancamento);
+        return null;
     }
 
     @Override

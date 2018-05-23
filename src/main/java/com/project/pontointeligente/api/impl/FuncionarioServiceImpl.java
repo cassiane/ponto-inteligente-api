@@ -1,23 +1,20 @@
 package com.project.pontointeligente.api.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import com.project.pontointeligente.api.dtos.LancamentoDto;
+import com.project.pontointeligente.api.entities.Funcionario;
+import com.project.pontointeligente.api.repositories.FuncionarioRepository;
 import com.project.pontointeligente.api.security.JwtUser;
+import com.project.pontointeligente.api.services.FuncionarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import com.project.pontointeligente.api.entities.Funcionario;
-import com.project.pontointeligente.api.repositories.FuncionarioRepository;
-import com.project.pontointeligente.api.services.FuncionarioService;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FuncionarioServiceImpl implements FuncionarioService{
@@ -36,11 +33,11 @@ public class FuncionarioServiceImpl implements FuncionarioService{
 
 	@Override
 	public Optional<Funcionario> buscarPorCpf(String cpf) {
-        LOGGER.info("Buscando funcionário por cpf: {}", cpf);
-        Optional<Funcionario> funcionario = Optional.ofNullable(this.funcionarioRepository.findByCpf(cpf));
-        LOGGER.info("Funcionário {} encontrado", funcionario.isPresent() ? "" : "não");
+		LOGGER.info("Buscando funcionário por cpf: {}", cpf);
+		Optional<Funcionario> funcionario = Optional.ofNullable(this.funcionarioRepository.findByCpf(cpf));
+		LOGGER.info("Funcionário {} encontrado", funcionario.isPresent() ? "" : "não");
 
-        return funcionario;
+		return funcionario;
 	}
 
 	@Override

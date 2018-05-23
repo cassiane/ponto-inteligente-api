@@ -23,9 +23,6 @@ public class ConverterLancamentoDtoParaLancamento {
             } else {
                 result.addError(new ObjectError("lancamento", "Lançamento não encontrado."));
             }
-        } else {
-            lancamento.setFuncionario(new Funcionario());
-            lancamento.getFuncionario().setId(lancamentoDto.getFuncionarioId());
         }
 
         lancamento.setDescricao(lancamentoDto.getDescricao());

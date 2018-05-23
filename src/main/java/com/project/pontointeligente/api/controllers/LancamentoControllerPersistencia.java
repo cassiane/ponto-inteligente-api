@@ -73,7 +73,7 @@ public class LancamentoControllerPersistencia {
     }
 
     private ResponseEntity<Response<LancamentoDto>> inclusaoAlteracao(CrudDto crudDto) {
-        if (isNull(crudDto)) {
+        if (isNull(crudDto) || !crudDto.isValido()) {
             return ResponseEntity.badRequest().body(crudDto.getResponse());
         }
         Lancamento lancamento = lancamentoService.persistirLancamento(crudDto.getLancamento());
@@ -114,9 +114,8 @@ public class LancamentoControllerPersistencia {
         Response<LancamentoDto> response = new Response<>();
         Optional<Funcionario> funcionario = funcionarioService.buscarPorId(lancamentoDto.getFuncionarioId());
         dto.setResponse(response);
-        if (isFuncionarioInvalido(lancamentoDto, result, response, funcionario)) {
-            dto.setValido(false);
-        }
+
+        dto.setValido(!isFuncionarioInvalido(lancamentoDto, result, response, funcionario));
 
         Optional<Lancamento> lanc = null;
         if (OperacaoEnum.ALTERACAO.equals(operacao)) {
@@ -124,8 +123,9 @@ public class LancamentoControllerPersistencia {
             lanc = this.lancamentoService.buscarLancamentoPorId(lancamentoDto.getId().get());
         }
 
-        Lancamento lancamento = dtoParaLancamento.convert(lancamentoDto, result, lanc);
         dto.setFuncionario(funcionario);
+        Lancamento lancamento = dtoParaLancamento.convert(lancamentoDto, result, lanc);
+        lancamento.setFuncionario(funcionario.get());
         dto.setLancamento(lancamento);
 
         return dto;

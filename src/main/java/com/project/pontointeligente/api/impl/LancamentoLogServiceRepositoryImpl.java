@@ -29,9 +29,9 @@ public class LancamentoLogServiceRepositoryImpl implements LancamentoLogServiceR
     private LancamentoLogRepository lancamentoLogRepository;
 
     @Cacheable("lancamentoPorId")
-	public Page<LancamentoLog> buscarPorIdLancamentoAlterado(Long idLancamentoAlterado, PageRequest pageRequest) {
+	public List<LancamentoLog> buscarPorIdLancamentoAlterado(Long idLancamentoAlterado) {
 		LOGGER.info("Buscando o log do lancamento de id: {}", idLancamentoAlterado);
-	    return this.lancamentoLogRepository.findByIdLancamentoAlterado(idLancamentoAlterado, pageRequest);
+	    return this.lancamentoLogRepository.findByIdLancamentoAlterado(idLancamentoAlterado);
 	}
 
 
