@@ -1,6 +1,7 @@
 package com.project.pontointeligente.api.impl;
 
 import com.project.pontointeligente.api.entities.Funcionario;
+import com.project.pontointeligente.api.exceptions.ValidationException;
 import com.project.pontointeligente.api.repositories.FuncionarioRepository;
 import com.project.pontointeligente.api.security.JwtUser;
 import com.project.pontointeligente.api.services.FuncionarioService;
@@ -19,16 +20,37 @@ import java.util.Optional;
 @Service
 public class FuncionarioServiceImpl implements FuncionarioService{
 
-	public static Logger LOGGER = LoggerFactory.getLogger(FuncionarioServiceImpl.class);
-	public static final String FUNCIONARIO = "funcionario";
+	private static final Logger LOGGER = LoggerFactory.getLogger(FuncionarioServiceImpl.class);
+	private static final String FUNCIONARIO = "funcionario";
+
+	private final FuncionarioRepository funcionarioRepository;
 
 	@Autowired
-	private FuncionarioRepository funcionarioRepository;
-
+	public FuncionarioServiceImpl(FuncionarioRepository funcionarioRepository) {
+		this.funcionarioRepository = funcionarioRepository;
+	}
 
 	@Override
 	public Funcionario persistir(Funcionario funcionario) {
+		LOGGER.info("Validando funcionário: {}", funcionario);
+		validar(funcionario);
+		LOGGER.info("Persistindo funcionário: {}", funcionario);
 		return this.funcionarioRepository.save(funcionario);
+	}
+
+	private void validar(Funcionario funcionario) {
+		validarCpfExistente(funcionario);
+		validarEmailExistente(funcionario);
+	}
+
+	private void validarCpfExistente(Funcionario funcionario) {
+		buscarPorCpf(funcionario.getCpf())
+				.ifPresent(func -> { throw new ValidationException(FUNCIONARIO, "CPF já existente."); });
+	}
+
+	private void validarEmailExistente(Funcionario funcionario) {
+		buscarPorEmail(funcionario.getEmail())
+				.ifPresent(func -> { throw new ValidationException(FUNCIONARIO, "Email já existente."); });
 	}
 
 	@Override
