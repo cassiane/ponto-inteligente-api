@@ -11,6 +11,8 @@ import com.project.pontointeligente.api.services.LancamentoServiceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
@@ -22,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 public class LancamentoServiceImpl  implements LancamentoService {
@@ -53,10 +56,23 @@ public class LancamentoServiceImpl  implements LancamentoService {
 
     @Override
     public Lancamento persistirLancamento(Lancamento lancamento) {
-        List<Lancamento> lancamentos = buscarPreviousHash(Long.valueOf(0));
+        Optional<Lancamento> lancamentoOptional = Optional.empty();
+        Long id = Long.valueOf(0);
+        OperacaoEnum operacaoEnum = OperacaoEnum.INCLUSAO;
+        if (nonNull(lancamento.getId())) {
+            lancamentoOptional = buscarLancamentoPorId(lancamento.getId());
+            if (!lancamentoOptional.isPresent()) {
+                return null;
+            }
+            id = lancamentoOptional.get().getId();
+            operacaoEnum = OperacaoEnum.ALTERACAO;
+        }
+
+        List<Lancamento> lancamentos = buscarPreviousHash(id);
         if (!CollectionUtils.isEmpty(lancamentos)) {
             LOGGER.info("Persistindo lançamento");
-            if (isNull(lancamento.getId())) {
+
+            if (!lancamentoOptional.isPresent()) {
                 LOGGER.info("Persistindo lançamento inclusão");
                 lancamento.setAtivo(true);
                 lancamento.setDataCriacao(Timestamp.valueOf(LocalDateTime.now()));
@@ -65,11 +81,10 @@ public class LancamentoServiceImpl  implements LancamentoService {
                         .reduce((first, second) -> second)
                         .orElse(null)).getHash());
             }
-//d060900c0d5cdfa5d902d8806a52c68f8c7855174d2fb3f0ef035bcafa796fd0
             lancamentos.add(lancamento);
             if (ValidadorBloco.isChainValid(lancamentos)) {
                 LOGGER.info("Bloco validado");
-                return persistirLancamentoComLog(lancamento);
+                return persistirLancamentoComLog(lancamento, operacaoEnum);
             }
         }
 
@@ -86,9 +101,14 @@ public class LancamentoServiceImpl  implements LancamentoService {
         this.lancamentoServiceRepository.remover(lancamento);
     }
 
-    private Lancamento persistirLancamentoComLog(Lancamento lancamento) {
+    @Override
+    public Page<Lancamento> buscarPorFuncionarioId(Long funcionarioId, PageRequest pageRequest) {
+        return lancamentoServiceRepository.buscarPorFuncionarioId(funcionarioId, pageRequest);
+    }
+
+    private Lancamento persistirLancamentoComLog(Lancamento lancamento, OperacaoEnum operacaoEnum) {
         lancamento = this.lancamentoServiceRepository.persistir(lancamento);
-        LancamentoLog log = new LancamentoLog(lancamento, OperacaoEnum.INCLUSAO);
+        LancamentoLog log = new LancamentoLog(lancamento, operacaoEnum);
         this.lancamentoServiceRepository.persistir(log);
         return lancamento;
     }

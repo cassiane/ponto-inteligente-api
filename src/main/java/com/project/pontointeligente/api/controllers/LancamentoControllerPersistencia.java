@@ -76,7 +76,7 @@ public class LancamentoControllerPersistencia {
         if (isNull(crudDto) || !crudDto.isValido()) {
             return ResponseEntity.badRequest().body(crudDto.getResponse());
         }
-        Lancamento lancamento = lancamentoService.persistirLancamento(crudDto.getLancamento());
+            Lancamento lancamento = lancamentoService.persistirLancamento(crudDto.getLancamento());
         if (nonNull(lancamento)) {
             crudDto.getResponse().setData(lancamentoParaDto.convert(lancamento));
             return ResponseEntity.ok(crudDto.getResponse());
@@ -121,6 +121,7 @@ public class LancamentoControllerPersistencia {
         if (OperacaoEnum.ALTERACAO.equals(operacao)) {
             lancamentoDto.setId(Optional.of(id));
             lanc = this.lancamentoService.buscarLancamentoPorId(lancamentoDto.getId().get());
+
         }
 
         dto.setFuncionario(funcionario);

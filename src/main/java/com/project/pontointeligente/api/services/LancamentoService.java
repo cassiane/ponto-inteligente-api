@@ -3,6 +3,8 @@ package com.project.pontointeligente.api.services;
 import com.project.pontointeligente.api.dtos.LancamentoDto;
 import com.project.pontointeligente.api.entities.Funcionario;
 import com.project.pontointeligente.api.entities.Lancamento;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
@@ -21,4 +23,6 @@ public interface LancamentoService {
     Optional<Lancamento> buscarLancamentoPorId(Long id);
 
     void remover(Lancamento lancamento);
+
+    Page<Lancamento> buscarPorFuncionarioId(Long funcionarioId, PageRequest pageRequest);
 }

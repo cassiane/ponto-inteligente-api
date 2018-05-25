@@ -6,13 +6,19 @@ import com.project.pontointeligente.api.dtos.LancamentoDto;
 import com.project.pontointeligente.api.dtos.LancamentoLogDto;
 import com.project.pontointeligente.api.entities.Lancamento;
 import com.project.pontointeligente.api.entities.LancamentoLog;
+import com.project.pontointeligente.api.enums.TipoEnum;
 import com.project.pontointeligente.api.response.Response;
 import com.project.pontointeligente.api.services.LancamentoLogServiceRepository;
 import com.project.pontointeligente.api.services.LancamentoService;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,12 +58,14 @@ public class LancamentoControllerListagens {
     }
 
     @GetMapping(value = "/isLancamentoValido/{lancamentoId}")
-    public LancamentoDto verificarLancamentoValido(@PathVariable("lancamentoId") Long id) throws Exception {
+    public ResponseEntity<Response<Boolean>> verificarLancamentoValido(@PathVariable("lancamentoId") Long id) throws Exception {
+        Response<Boolean> response = new Response<>();
         Optional<Lancamento> lancamento = lancamentoService.buscarLancamentoPorId(id);
         if (lancamento.isPresent()) {
             List<Lancamento> lancamentos = lancamentoService.buscarPreviousHash(id);
             if (ValidadorBloco.isChainValid(lancamentos)) {
-                return lancamentoParaDto.convert(lancamento.get());
+                response.setData(lancamento.isPresent());
+                return ResponseEntity.ok(response);
             } else {
                 throw new Exception("Lançamento não é válido");
             }
@@ -88,27 +96,39 @@ public class LancamentoControllerListagens {
         log.info("Buscando historico para ID do lancamento: {}, página: {}", idLancamentoAlterado);
         Response<List<LancamentoLogDto>> response = new Response<>();
 
-        List<LancamentoLog> logs = this.lancamentoLogServiceRepository.buscarPorIdLancamentoAlterado(idLancamentoAlterado);
-        List<LancamentoLogDto> lancamentosLogDto = logs.stream().map(this.lancamentoLogParaDto::convert).collect(Collectors.toList());
+        Optional<Lancamento> lancamento = this.lancamentoService.buscarLancamentoPorId(idLancamentoAlterado);
+        if (lancamento.isPresent()) {
+            if (!TipoEnum.REGISTRO_INICIAL.equals(lancamento.get().getTipo())) {
+                List<LancamentoLog> logs = this.lancamentoLogServiceRepository.buscarPorIdLancamentoAlterado(idLancamentoAlterado);
+                List<LancamentoLogDto> lancamentosLogDto = logs.stream().map(this.lancamentoLogParaDto::convert).collect(Collectors.toList());
 
-        response.setData(lancamentosLogDto);
-        return ResponseEntity.ok(response);
+                response.setData(lancamentosLogDto);
+                return ResponseEntity.ok(response);
+            } else {
+                response.getErrors().add("Registro inicial não pode ser auditado.");
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
+            }
+        } else {
+            response.getErrors().add("Lançamento não encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
     }
 
-//    @GetMapping(value = "/funcionario/{funcionarioId}")
-//    public ResponseEntity<Response<Page<LancamentoDto>>> listarPorFuncionarioId(
-//            @PathVariable("funcionarioId") Long funcionarioId,
-//            @RequestParam(value = "pag", defaultValue = "0") int pag,
-//            @RequestParam(value = "ord", defaultValue = "id") String ord,
-//            @RequestParam(value = "dir", defaultValue = "DESC") String dir) {
-//        log.info("Buscando lançamentos por ID do funcionário: {}, página: {}", funcionarioId, pag);
-//        Response<Page<LancamentoDto>> response = new Response<Page<LancamentoDto>>();
-//
-//        PageRequest pageRequest = new PageRequest(pag, getQtdPorPagina(), Sort.Direction.valueOf(dir), ord);
-//        Page<Lancamento> lancamentos = this.lancamentoServiceRepository.buscarPorFuncionarioId(funcionarioId, pageRequest);
-//        Page<LancamentoDto> lancamentosDto = lancamentos.map(lancamento -> this.lancamentoParaDto.convert(lancamento));
-//
-//        response.setData(lancamentosDto);
-//        return ResponseEntity.ok(response);
-//    }
+    @GetMapping(value = "/funcionario/{funcionarioId}")
+    public ResponseEntity<Response<Page<LancamentoDto>>> listarPorFuncionarioId(
+            @PathVariable("funcionarioId") Long funcionarioId,
+            @RequestParam(value = "pag", defaultValue = "0") int pag,
+            @RequestParam(value = "ord", defaultValue = "id") String ord,
+            @RequestParam(value = "dir", defaultValue = "DESC") String dir) {
+        log.info("Buscando lançamentos por ID do funcionário: {}, página: {}", funcionarioId, pag);
+        Response<Page<LancamentoDto>> response = new Response<Page<LancamentoDto>>();
+
+        PageRequest pageRequest = new PageRequest(pag, getQtdPorPagina(), Sort.Direction.valueOf(dir), ord);
+        Page<Lancamento> lancamentos = this.lancamentoService.buscarPorFuncionarioId(funcionarioId, pageRequest);
+        Page<LancamentoDto> lancamentosDto = lancamentos.map(lancamento -> this.lancamentoParaDto.convert(lancamento));
+
+        response.setData(lancamentosDto);
+        return ResponseEntity.ok(response);
+    }
 }

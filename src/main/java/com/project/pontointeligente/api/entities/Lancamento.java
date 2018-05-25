@@ -150,10 +150,10 @@ public class Lancamento implements Serializable {
 	}
 
     public String calculateHash() {
-	    LOGGER.info("Calculando hash dos dados: cpf: {}, data: {}, id:{}", this.getFuncionario().getCpf(), data.toString(), id);
+	    LOGGER.info("Calculando hash dos dados: cpf: {}, data: {}, id:{}", this.getFuncionario().getCpf(), dataCriacao.toString(), id);
 		return HashUtils.applySha256(
                         funcionario.getCpf() +
-								data.toString()
+								dataCriacao.toString()
         );
     }
 
