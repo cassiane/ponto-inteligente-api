@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Optional;
 
+import com.project.pontointeligente.api.empresa.EmpresaService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.project.pontointeligente.api.PontoInteligenteApplication;
-import com.project.pontointeligente.api.entities.Empresa;
-import com.project.pontointeligente.api.repositories.EmpresaRepository;
-import com.project.pontointeligente.api.services.EmpresaService;
+import com.project.pontointeligente.api.empresa.Empresa;
+import com.project.pontointeligente.api.empresa.EmpresaRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PontoInteligenteApplication.class)

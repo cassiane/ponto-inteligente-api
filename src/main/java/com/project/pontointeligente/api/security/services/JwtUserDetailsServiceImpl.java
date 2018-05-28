@@ -8,9 +8,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.project.pontointeligente.api.entities.Funcionario;
+import com.project.pontointeligente.api.funcionario.Funcionario;
 import com.project.pontointeligente.api.security.JwtUserFactory;
-import com.project.pontointeligente.api.services.FuncionarioService;
+import com.project.pontointeligente.api.funcionario.FuncionarioService;
 
 @Service
 public class JwtUserDetailsServiceImpl implements UserDetailsService {

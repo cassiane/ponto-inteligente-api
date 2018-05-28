@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.project.pontointeligente.api.lancamento.LancamentoService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +22,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.project.pontointeligente.api.PontoInteligenteApplication;
-import com.project.pontointeligente.api.entities.Lancamento;
-import com.project.pontointeligente.api.repositories.LancamentoRepository;
+import com.project.pontointeligente.api.lancamento.Lancamento;
+import com.project.pontointeligente.api.lancamento.LancamentoRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PontoInteligenteApplication.class)
@@ -33,7 +34,7 @@ public class LancamentoServiceRepositoryTest {
 	private LancamentoRepository lancamentoRepository;
 
 	@Autowired
-	private LancamentoServiceRepository lancamentoServiceRepository;
+	private LancamentoService lancamentoService;
 
 	@Before
 	public void setUp() throws Exception {
@@ -46,19 +47,19 @@ public class LancamentoServiceRepositoryTest {
 
 	@Test
 	public void testBuscarPorFuncionarioIdPaginado() {
-		Page<Lancamento> lancamento = this.lancamentoServiceRepository.buscarPorFuncionarioId(1L, new PageRequest(0, 10));
+		Page<Lancamento> lancamento = this.lancamentoService.buscarPorFuncionarioId(1L, new PageRequest(0, 10));
 		assertNotNull(lancamento);
 	}
 
 	@Test
 	public void testBuscarPorFuncionarioId() {
-		Optional<Lancamento> lancamento = this.lancamentoServiceRepository.buscarPorId(1L);
+		Optional<Lancamento> lancamento = this.lancamentoService.buscarLancamentoPorId(1L);
 		assertTrue(lancamento.isPresent());
 	}
 
 	@Test
 	public void testPersistir() {
-		Lancamento lancamento = this.lancamentoServiceRepository.persistir(new Lancamento());
+		Lancamento lancamento = this.lancamentoService.persistirLancamento(new Lancamento());
 		assertNotNull(lancamento);
 	}
 

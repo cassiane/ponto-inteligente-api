@@ -3,6 +3,8 @@ package com.project.pontointeligente.api.repositories;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.project.pontointeligente.api.empresa.EmpresaRepository;
+import com.project.pontointeligente.api.funcionario.FuncionarioRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,9 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.project.pontointeligente.api.entities.Empresa;
-import com.project.pontointeligente.api.entities.Funcionario;
-import com.project.pontointeligente.api.enums.PerfilEnum;
+import com.project.pontointeligente.api.empresa.Empresa;
+import com.project.pontointeligente.api.funcionario.Funcionario;
+import com.project.pontointeligente.api.funcionario.PerfilEnum;
 import com.project.pontointeligente.api.utils.PasswordUtils;
 
 @RunWith(SpringRunner.class)

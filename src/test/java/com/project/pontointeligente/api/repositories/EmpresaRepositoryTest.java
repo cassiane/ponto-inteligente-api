@@ -2,6 +2,7 @@ package com.project.pontointeligente.api.repositories;
 
 import static org.junit.Assert.assertEquals;
 
+import com.project.pontointeligente.api.empresa.EmpresaRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.project.pontointeligente.api.entities.Empresa;
+import com.project.pontointeligente.api.empresa.Empresa;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import com.project.pontointeligente.api.lancamento.LancamentoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
@@ -25,12 +26,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.pontointeligente.api.dtos.LancamentoDto;
-import com.project.pontointeligente.api.entities.Funcionario;
-import com.project.pontointeligente.api.entities.Lancamento;
-import com.project.pontointeligente.api.enums.TipoEnum;
-import com.project.pontointeligente.api.services.FuncionarioService;
-import com.project.pontointeligente.api.services.LancamentoServiceRepository;
+import com.project.pontointeligente.api.lancamento.LancamentoDto;
+import com.project.pontointeligente.api.funcionario.Funcionario;
+import com.project.pontointeligente.api.lancamento.Lancamento;
+import com.project.pontointeligente.api.lancamento.TipoEnum;
+import com.project.pontointeligente.api.funcionario.FuncionarioService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -42,7 +42,7 @@ public class LancamentoControllerPersistenciaTest {
 	private MockMvc mvc;
 	
 	@MockBean
-	private LancamentoServiceRepository lancamentoServiceRepository;
+	private LancamentoService lancamentoService;
 	
 	@MockBean
 	private FuncionarioService funcionarioService;
@@ -60,7 +60,7 @@ public class LancamentoControllerPersistenciaTest {
 	public void testCadastrarLancamento() throws Exception {
 		Lancamento lancamento = obterDadosLancamento();
 		BDDMockito.given(this.funcionarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Funcionario()));
-		BDDMockito.given(this.lancamentoServiceRepository.persistir(Mockito.any(Lancamento.class))).willReturn(lancamento);
+		BDDMockito.given(this.lancamentoService.persistirLancamento(Mockito.any(Lancamento.class))).willReturn(lancamento);
 
 		mvc.perform(MockMvcRequestBuilders.post(URL_BASE)
 				.content(this.obterJsonRequisicaoPost())
@@ -91,7 +91,7 @@ public class LancamentoControllerPersistenciaTest {
 	@Test
 	@WithMockUser(username = "admin@admin.com", roles = {"ADMIN"})
 	public void testRemoverLancamento() throws Exception {
-		BDDMockito.given(this.lancamentoServiceRepository.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
+		BDDMockito.given(this.lancamentoService.buscarLancamentoPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
 
 		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO)
 				.accept(MediaType.APPLICATION_JSON))
@@ -101,7 +101,7 @@ public class LancamentoControllerPersistenciaTest {
 	@Test
 	@WithMockUser
 	public void testRemoverLancamentoAcessoNegado() throws Exception {
-		BDDMockito.given(this.lancamentoServiceRepository.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
+		BDDMockito.given(this.lancamentoService.buscarLancamentoPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
 
 		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO)
 				.accept(MediaType.APPLICATION_JSON))

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
+import com.project.pontointeligente.api.funcionario.FuncionarioService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,9 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.project.pontointeligente.api.PontoInteligenteApplication;
-import com.project.pontointeligente.api.entities.Funcionario;
-import com.project.pontointeligente.api.repositories.FuncionarioRepository;
-import com.project.pontointeligente.api.services.FuncionarioService;
+import com.project.pontointeligente.api.funcionario.Funcionario;
+import com.project.pontointeligente.api.funcionario.FuncionarioRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PontoInteligenteApplication.class)

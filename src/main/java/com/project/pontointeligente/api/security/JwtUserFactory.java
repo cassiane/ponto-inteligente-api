@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import com.project.pontointeligente.api.entities.Funcionario;
-import com.project.pontointeligente.api.enums.PerfilEnum;
+import com.project.pontointeligente.api.funcionario.Funcionario;
+import com.project.pontointeligente.api.funcionario.PerfilEnum;
 
 public class JwtUserFactory {
 	
