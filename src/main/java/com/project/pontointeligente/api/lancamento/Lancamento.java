@@ -2,6 +2,7 @@ package com.project.pontointeligente.api.lancamento;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import com.project.pontointeligente.api.centroCusto.CentroCusto;
 import com.project.pontointeligente.api.funcionario.Funcionario;
 import com.project.pontointeligente.api.utils.HashUtils;
 import org.hibernate.annotations.Where;
@@ -31,6 +32,7 @@ public class Lancamento implements Serializable {
     private String hash;
     private String previousHash;
     private Boolean ativo;
+    private CentroCusto centroCusto;
 
 	public Lancamento(LancamentoCrudDto lancamentoCrudDto) {
 		Lancamento lancamento = lancamentoCrudDto.getLancamento();
@@ -128,6 +130,15 @@ public class Lancamento implements Serializable {
 	@Column(name = "ativo")
 	public Boolean getAtivo() {
 		return ativo;
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	public CentroCusto getCentroCusto() {
+		return centroCusto;
+	}
+
+	public void setCentroCusto(CentroCusto centroCusto) {
+		this.centroCusto = centroCusto;
 	}
 
 	public void setAtivo(Boolean ativo) {

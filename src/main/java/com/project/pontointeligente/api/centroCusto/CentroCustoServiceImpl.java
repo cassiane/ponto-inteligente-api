@@ -42,7 +42,7 @@ public class CentroCustoServiceImpl implements CentroCustoService {
     }
 
     @Override
-    public CentroCusto buscarPorId(Long id) {
-        return repository.findOne(id);
+    public Optional<CentroCusto> buscarPorId(Long id) {
+        return Optional.ofNullable(repository.findOne(id));
     }
 }

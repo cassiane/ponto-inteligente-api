@@ -15,6 +15,7 @@ public class LancamentoDto {
 	private String descricao;
 	private Long funcionarioId;
 	private String hash;
+	private Long centroCusto;
 
 	public LancamentoDto() {
 	}
@@ -60,7 +61,7 @@ public class LancamentoDto {
 		this.funcionarioId = funcionarioId;
 	}
 
-    public String getHash() {
+    private String getHash() {
         return hash;
     }
 
@@ -68,7 +69,15 @@ public class LancamentoDto {
         this.hash = hash;
     }
 
-    @Override
+	public Long getCentroCusto() {
+		return centroCusto;
+	}
+
+	public void setCentroCusto(Long centroCusto) {
+		this.centroCusto = centroCusto;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof LancamentoDto)) return false;
@@ -78,12 +87,13 @@ public class LancamentoDto {
                 Objects.equal(getTipo(), that.getTipo()) &&
                 Objects.equal(getDescricao(), that.getDescricao()) &&
                 Objects.equal(getFuncionarioId(), that.getFuncionarioId()) &&
-                Objects.equal(getHash(), that.getHash());
+                Objects.equal(getHash(), that.getHash()) &&
+				Objects.equal(getCentroCusto(), that.getCentroCusto());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId(), getData(), getTipo(), getDescricao(), getFuncionarioId(), getHash());
+        return Objects.hashCode(getId(), getData(), getTipo(), getDescricao(), getFuncionarioId(), getHash(), getCentroCusto());
     }
 
     @Override
@@ -95,6 +105,7 @@ public class LancamentoDto {
                 .add("descricao", descricao)
                 .add("funcionarioId", funcionarioId)
                 .add("hash", hash)
+				.add("centroCusto", centroCusto)
                 .toString();
     }
 }

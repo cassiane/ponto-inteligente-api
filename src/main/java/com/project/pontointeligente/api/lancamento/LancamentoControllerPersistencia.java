@@ -1,5 +1,7 @@
 package com.project.pontointeligente.api.lancamento;
 
+import com.project.pontointeligente.api.centroCusto.CentroCusto;
+import com.project.pontointeligente.api.centroCusto.CentroCustoService;
 import com.project.pontointeligente.api.funcionario.Funcionario;
 import com.project.pontointeligente.api.response.Response;
 import com.project.pontointeligente.api.funcionario.FuncionarioService;
@@ -27,17 +29,19 @@ public class LancamentoControllerPersistencia {
 
 	private LancamentoService lancamentoService;
 	private FuncionarioService funcionarioService;
+	private CentroCustoService centroCustoService;
 	private ConverterLancamentoDtoParaLancamento dtoParaLancamento;
 	private ConverterLancamentoParaLancamentoDto lancamentoParaDto;
 
 	@Autowired
 	public LancamentoControllerPersistencia(LancamentoService lancamentoService,
                                             FuncionarioService funcionarioService,
-                                            ConverterLancamentoDtoParaLancamento dtoParaLancamento,
+                                            CentroCustoService centroCustoService, ConverterLancamentoDtoParaLancamento dtoParaLancamento,
                                             ConverterLancamentoParaLancamentoDto lancamentoParaDto) {
         this.lancamentoService = lancamentoService;
         this.funcionarioService = funcionarioService;
-		this.dtoParaLancamento = dtoParaLancamento;
+        this.centroCustoService = centroCustoService;
+        this.dtoParaLancamento = dtoParaLancamento;
 		this.lancamentoParaDto = lancamentoParaDto;
 	}
 
@@ -101,11 +105,13 @@ public class LancamentoControllerPersistencia {
         LancamentoCrudDto dto = new LancamentoCrudDto();
         Response<LancamentoDto> response = new Response<>();
         Optional<Funcionario> funcionario = funcionarioService.buscarPorId(lancamentoDto.getFuncionarioId());
+        Optional<CentroCusto> centroCusto = centroCustoService.buscarPorId(lancamentoDto.getCentroCusto());
         dto.setResponse(response);
 
-        dto.setValido(!isFuncionarioInvalido(lancamentoDto, result, response, funcionario));
+        dto.setValido(isFuncionarioValido(lancamentoDto, result, response, funcionario) &&
+                    centroCusto.isPresent());
 
-        Optional<Lancamento> lanc = null;
+        Optional<Lancamento> lanc = Optional.empty();
         if (OperacaoEnum.ALTERACAO.equals(operacao)) {
             lancamentoDto.setId(Optional.of(id));
             lanc = this.lancamentoService.buscarLancamentoPorId(lancamentoDto.getId().get());
@@ -120,8 +126,8 @@ public class LancamentoControllerPersistencia {
         return dto;
     }
 
-    private boolean isFuncionarioInvalido(@Valid @RequestBody LancamentoDto lancamentoDto, BindingResult result,
-                                          Response<LancamentoDto> response, Optional<Funcionario> funcionario) {
+    private boolean isFuncionarioValido(@Valid @RequestBody LancamentoDto lancamentoDto, BindingResult result,
+                                        Response<LancamentoDto> response, Optional<Funcionario> funcionario) {
         List<ObjectError> erros = funcionarioService.validarFuncionarioNoLancamento(lancamentoDto.getFuncionarioId(), funcionario);
 
         if (erros.size() > 0) {
@@ -130,9 +136,9 @@ public class LancamentoControllerPersistencia {
                 result.addError(erro);
                 response.getErrors().add(erro.getDefaultMessage());
             });
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
 

@@ -17,6 +17,7 @@ public class ConverterLancamentoParaLancamentoDto implements Converter<Lancament
         lancamentoDto.setDescricao(lancamento.getDescricao());
         lancamentoDto.setFuncionarioId(lancamento.getFuncionario().getId());
         lancamentoDto.setHash(lancamento.getHash());
+        lancamentoDto.setCentroCusto(lancamento.getCentroCusto().getId());
 
         return lancamentoDto;
     }

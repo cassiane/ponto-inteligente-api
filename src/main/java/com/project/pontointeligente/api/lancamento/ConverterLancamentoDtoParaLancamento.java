@@ -1,5 +1,6 @@
 package com.project.pontointeligente.api.lancamento;
 
+import com.project.pontointeligente.api.centroCusto.CentroCusto;
 import org.apache.commons.lang3.EnumUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -23,6 +24,9 @@ public class ConverterLancamentoDtoParaLancamento {
 
         lancamento.setDescricao(lancamentoDto.getDescricao());
         lancamento.setData(Timestamp.valueOf(lancamentoDto.getData()));
+        CentroCusto centroCusto = new CentroCusto();
+        centroCusto.setId(lancamentoDto.getCentroCusto());
+        lancamento.setCentroCusto(centroCusto);
 
         if (EnumUtils.isValidEnum(TipoEnum.class, lancamentoDto.getTipo())) {
             lancamento.setTipo(TipoEnum.valueOf(lancamentoDto.getTipo()));
