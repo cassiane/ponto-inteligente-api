@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -110,5 +112,18 @@ public class LancamentoServiceImpl  implements LancamentoService {
     public List<LancamentoLog> buscarLogsPorIdLancamentoAlterado(Long idLancamentoAlterado) {
         LOGGER.info("Buscando o log do lancamento de id: {}", idLancamentoAlterado);
         return this.lancamentoLogRepository.findByIdLancamentoAlterado(idLancamentoAlterado);
+    }
+
+    @Override
+    public List<Lancamento> buscarLancamentosCompetenciaAtualPorFuncionarioId(Long idFuncionario) {
+        LOGGER.info("Buscar lançamentos pelo id do funcionário: {}", idFuncionario);
+        LocalDateTime dataInicial = LocalDateTime.of(LocalDate.now().withDayOfMonth(1), LocalTime.MIN);
+        LocalDateTime dataFinal = LocalDateTime.of(LocalDate.now().withDayOfMonth(
+                LocalDate.now().lengthOfMonth()),
+                LocalTime.MAX);
+
+        return this.lancamentoRepository.findCompetenciaAtualByFuncionarioId(idFuncionario,
+                Timestamp.valueOf(dataInicial),
+                Timestamp.valueOf(dataFinal));
     }
 }
