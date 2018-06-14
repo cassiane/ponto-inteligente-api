@@ -36,11 +36,14 @@ public class ReportService {
     }
 
     private JRMapCollectionDataSource getDetail(List<Lancamento> lancamentos) {
-        Map<String, Object> detail = new HashMap<>();
-        detail.put("nmFuncionario", lancamentos.stream().findFirst().get().getFuncionario().getNome());
-        detail.put("competencia", getCompetencia(lancamentos));
+        List<Map<String, ?>> details = Lists.newArrayList();
+        Map<String, Object> detailTitle = new HashMap<>();
+        detailTitle.put("nmFuncionario", lancamentos.stream().findFirst().get().getFuncionario().getNome());
+        detailTitle.put("competencia", getCompetencia(lancamentos));
+        details.add(detailTitle);
+
         for (Lancamento lancamento : lancamentos) {
-            detail.put("centroCusto", lancamento.getCentroCusto().getCentroCusto());
+            Map<String, Object> detail = new HashMap<>();
             Timestamp hora = Timestamp.valueOf(lancamento.getData().toLocalDateTime());
 
             if (isEntrada(lancamento.getTipo())) {
@@ -48,14 +51,16 @@ public class ReportService {
             } else {
                 detail.put("saida", hora);
             }
+            detail.put("centroCusto", lancamento.getCentroCusto().getCentroCusto());
+            details.add(detail);
         }
 
-        return new JRMapCollectionDataSource(Lists.newArrayList(detail));
+        return new JRMapCollectionDataSource(details);
     }
 
     private String getCompetencia(List<Lancamento> lancamentos) {
         LocalDateTime competencia = lancamentos.stream().findFirst().get().getData().toLocalDateTime();
-        return competencia.getYear() + "/" + competencia.getMonth();
+        return competencia.getYear() + "/" + competencia.getMonthValue();
     }
 
     private boolean isEntrada(TipoEnum tpLlancamento) {
