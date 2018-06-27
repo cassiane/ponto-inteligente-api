@@ -21,4 +21,6 @@ public interface LancamentoService {
     List<LancamentoLog> buscarLogsPorIdLancamentoAlterado(Long idLancamentoAlterado);
 
     List<Lancamento> buscarLancamentosCompetenciaAtualPorFuncionarioId(Long idFuncionario);
+
+    String assinarLancamento(Long idLancamento, String senhaAssinatura);
 }

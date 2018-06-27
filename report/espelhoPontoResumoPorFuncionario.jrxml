@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3600cf21-b357-489c-b7ee-9e48d45edbe2">
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nmFuncionario" class="java.lang.String"/>
+	<field name="competencia" class="java.lang.String"/>
+	<field name="entrada" class="java.sql.Timestamp"/>
+	<field name="saida" class="java.sql.Timestamp"/>
+	<field name="centroCusto" class="java.lang.Integer"/>
+	<field name="total" class="java.lang.Double"/>
+	<field name="assinado" class="java.lang.String"/>
+	<field name="ativo" class="java.lang.String"/>
+	<field name="entrada2" class="java.sql.Time"/>
+	<field name="saida2" class="java.sql.Time"/>
+	<field name="centroCusto2" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="94" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="560" height="30" uuid="f11a6387-8518-48ee-8b83-1a616179ac8d"/>
+				<textElement textAlignment="Center">
+					<font size="19"/>
+				</textElement>
+				<text><![CDATA[Espelho de Ponto Resumo Por Funcionário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="30" width="100" height="20" uuid="fa9da580-6ead-4a30-93a3-722074fcbbd8"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Competência: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="30" width="80" height="18" uuid="f2735ff4-281e-471a-bedc-2bb5c0de4527"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Funcionário: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="30" width="300" height="18" uuid="78d9a874-70c5-4cb8-8e33-92772f01143d"/>
+				<textFieldExpression><![CDATA[$F{nmFuncionario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="480" y="30" width="70" height="18" uuid="aa6759b1-13e8-4d8f-aea5-c6bd8eab035d"/>
+				<textFieldExpression><![CDATA[$F{competencia}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="70" height="20" uuid="5f9fc538-7d8b-4c0a-99b9-e7ec26aa3a73"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Entrada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="0" width="70" height="20" uuid="2051a229-6d18-4d5e-9d11-dfff2ac9e0c5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saída]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="0" width="70" height="20" uuid="6aa4c91f-8096-43b1-834a-7ba6e9b7b6c0"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Centro de Custo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="510" y="0" width="65" height="20" uuid="859433d3-e9bd-4de6-9b52-a31374026804"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="255" y="0" width="70" height="20" uuid="4e6323f5-7933-4a1f-8748-c3783ece0d02"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Entrada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="0" width="70" height="20" uuid="3b421b31-2ef1-49ab-904f-251442810f84"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saída]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="0" width="70" height="20" uuid="a20fa883-2bd6-4ef9-a07c-19632a06ffff"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Centro de Custo]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="49" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="70" height="20" uuid="ee30cc15-6245-4be9-b372-2599083c3593">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="46cc90fc-e50e-4095-a402-3a71c952cb47"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{entrada}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="0" width="70" height="20" uuid="f829e2b5-b934-4060-a59b-2680e13f9e94">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0cee1f0a-49c3-4a8c-89d3-90f8f017d3f8"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{saida}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="170" y="0" width="70" height="20" uuid="39a24d89-0a76-40ed-a8b3-a3bcc7a85100">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f767a7f6-5547-4646-ad2d-df0c80fc195b"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{centroCusto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="510" y="0" width="65" height="20" uuid="791a336d-4a0d-445c-bdf3-44b0f2877281">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ab8f1962-2ed7-4b58-86e2-dd5deb8c6418"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="255" y="0" width="70" height="20" uuid="b5e2fec0-cd20-4a71-99e4-411de2759142">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="888bd03b-cc8e-43e9-9a27-42eadbf58cb4"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{entrada2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="340" y="0" width="70" height="20" uuid="26d8810a-e86a-4063-8f14-16dd2ca7bc76">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="483e4538-e1bb-44d8-ad98-6cc89ce03487"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{saida2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="425" y="0" width="70" height="20" uuid="dd7e468d-9adc-427c-a723-820319bc3ef3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="93d75dcc-c4ca-4c86-8489-2bfd77989577"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{centroCusto2}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="460" y="0" width="90" height="21" uuid="cc3f5c46-83e9-4482-9fc9-299a51ef565d"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
