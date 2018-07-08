@@ -4,6 +4,7 @@ public class AssinaturaDto {
 
     private Long lancamentoId;
     private String senha;
+    private String token;
 
     public String getSenha() {
         return senha;
@@ -19,5 +20,13 @@ public class AssinaturaDto {
 
     public void setLancamentoId(Long lancamentoId) {
         this.lancamentoId = lancamentoId;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

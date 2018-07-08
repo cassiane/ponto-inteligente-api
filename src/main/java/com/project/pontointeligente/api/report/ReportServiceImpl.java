@@ -22,6 +22,8 @@ public class ReportServiceImpl implements ReportService {
 
     public static final String ESPELHO_PONTO_RESUMO_POR_FUNCIONARIO = "espelhoPontoResumoPorFuncionario";
     public static final String ESPELHO_PONTO_ANALITICO_POR_FUNCIONARIO = "espelhoPontoAnaliticoPorFuncionario";
+    public static final String ESPELHO_PONTO_ANALITICO_POR_CENTRO_CUSTO = "espelhoPontoAnaliticoPorCentroCusto";
+    public static final String ESPELHO_PONTO_RESUMO_POR_CENTRO_CUSTO = "espelhoPontoResumoPorCentroCusto";
     private final JasperReportBuilder jasperReportBuilder;
     private LancamentoService lancamentoService;
 
@@ -40,7 +42,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public byte[] imprimirEspelhoPontoAnaliticoPorCentroCusto(int centroCusto) {
-        return new byte[0];
+        List<Lancamento> lancamentos = lancamentoService.buscarLancamentosCompetenciaAtualPorCentroCusto(centroCusto);
+        return jasperReportBuilder.build(ESPELHO_PONTO_ANALITICO_POR_CENTRO_CUSTO, new HashMap<>(),
+                setCampos(lancamentos, false));
     }
 
     @Override
@@ -56,7 +60,13 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public byte[] imprimirEspelhoPontoResumoPorCentroCusto(int centroCusto) {
-        return new byte[0];
+        List<Lancamento> lancamentos = lancamentoService.buscarLancamentosCompetenciaAtualPorCentroCusto(centroCusto);
+        lancamentos.stream()
+                .filter(lancamento -> lancamento.getAtivo() && lancamento.getAssinaturaHash() != null)
+                .collect(Collectors.toList());
+
+        return jasperReportBuilder.build(ESPELHO_PONTO_RESUMO_POR_CENTRO_CUSTO, new HashMap<>(),
+                setCampos(lancamentos, true));
     }
 
     @Override
@@ -121,9 +131,7 @@ public class ReportServiceImpl implements ReportService {
         if (isResumo) {
             float saldo = horasTrabalhadas / 60 - horasPrevistas;
             BigDecimal salario = BigDecimal.ZERO;
-            if (saldo > 0) {
-                salario = lancamentos.stream().findFirst().get().getFuncionario().getValorHora().multiply(BigDecimal.valueOf(saldo));
-            }
+            salario = lancamentos.stream().findFirst().get().getFuncionario().getValorHora().multiply(BigDecimal.valueOf(horasTrabalhadas / 60));
             Map<String, Object> detailSaldo = (Map<String, Object>) details.get(details.size() - 1);
             detailSaldo.put("saldo", String.valueOf(saldo));
             detailSaldo.put("salario", salario.toString());

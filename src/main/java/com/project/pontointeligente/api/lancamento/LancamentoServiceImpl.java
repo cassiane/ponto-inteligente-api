@@ -122,7 +122,19 @@ public class LancamentoServiceImpl  implements LancamentoService {
                 LocalDate.now().lengthOfMonth()),
                 LocalTime.MAX);
 
-        return this.lancamentoRepository.findCompetenciaAtualByFuncionarioId(idFuncionario,
+        return this.lancamentoRepository.findByCompetenciaAndFuncionarioId(idFuncionario,
+                Timestamp.valueOf(dataInicial),
+                Timestamp.valueOf(dataFinal));
+    }
+
+    @Override
+    public List<Lancamento> buscarLancamentosCompetenciaAtualPorCentroCusto(int centroCusto) {
+        LocalDateTime dataInicial = LocalDateTime.of(LocalDate.now().withDayOfMonth(1), LocalTime.MIN);
+        LocalDateTime dataFinal = LocalDateTime.of(LocalDate.now().withDayOfMonth(
+                LocalDate.now().lengthOfMonth()),
+                LocalTime.MAX);
+
+        return lancamentoRepository.findByCompetenciaAndCentroCusto(Long.valueOf(centroCusto),
                 Timestamp.valueOf(dataInicial),
                 Timestamp.valueOf(dataFinal));
     }

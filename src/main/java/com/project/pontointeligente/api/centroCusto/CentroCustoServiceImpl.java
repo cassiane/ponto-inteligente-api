@@ -7,17 +7,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CentroCustoServiceImpl implements CentroCustoService {
 
     private CentroCustoRepository repository;
     private EmpresaService empresaService;
+    private CentroCustoToCentroCustoDto centroCustoToCentroCustoDto;
 
     @Autowired
-    public CentroCustoServiceImpl(CentroCustoRepository repository, EmpresaService empresaService) {
+    public CentroCustoServiceImpl(CentroCustoRepository repository, EmpresaService empresaService, CentroCustoToCentroCustoDto centroCustoToCentroCustoDto) {
         this.repository = repository;
         this.empresaService = empresaService;
+        this.centroCustoToCentroCustoDto = centroCustoToCentroCustoDto;
     }
 
     @Override
@@ -32,17 +35,27 @@ public class CentroCustoServiceImpl implements CentroCustoService {
     }
 
     @Override
-    public void excluir(CentroCusto centroCusto) {
-        repository.delete(centroCusto);
+    public void excluir(Long id) throws Exception {
+        CentroCusto centroCusto = repository.findOne(id);
+        if (centroCusto != null) {
+            repository.delete(centroCusto);
+        } else {
+            throw new Exception("Centro de custo não encontrado");
+        }
     }
 
     @Override
-    public List<CentroCusto> listar() {
-        return repository.findAll();
+    public List<CentroCustoDto> listar() {
+        return repository.findAll().stream().map(centroCusto -> centroCustoToCentroCustoDto.convert(centroCusto)).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<CentroCusto> buscarPorId(Long id) {
-        return Optional.ofNullable(repository.findOne(id));
+    public Optional<CentroCustoDto> buscarPorId(Long id) {
+        CentroCusto centroCusto = repository.findOne(id);
+        if (centroCusto != null) {
+            return Optional.of(centroCustoToCentroCustoDto.convert(centroCusto));
+        } else {
+            return Optional.empty();
+        }
     }
 }

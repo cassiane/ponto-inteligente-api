@@ -9,12 +9,9 @@
 	<field name="entrada" class="java.sql.Timestamp"/>
 	<field name="saida" class="java.sql.Timestamp"/>
 	<field name="centroCusto" class="java.lang.Integer"/>
-	<field name="total" class="java.lang.Double"/>
+    <field name="total" class="java.lang.String"/>
 	<field name="assinado" class="java.lang.String"/>
 	<field name="ativo" class="java.lang.String"/>
-	<variable name="total" class="java.lang.String">
-		<variableExpression><![CDATA[$F{saida} - $F{entrada}]]></variableExpression>
-	</variable>
 	<group name="GroupFuncionario">
 		<groupExpression><![CDATA[$F{nmFuncionario}]]></groupExpression>
 		<groupHeader>

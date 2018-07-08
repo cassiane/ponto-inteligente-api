@@ -22,5 +22,7 @@ public interface LancamentoService {
 
     List<Lancamento> buscarLancamentosCompetenciaAtualPorFuncionarioId(Long idFuncionario);
 
+    public List<Lancamento> buscarLancamentosCompetenciaAtualPorCentroCusto(int centroCusto);
+
     String assinarLancamento(Long idLancamento, String senhaAssinatura);
 }

@@ -1,10 +1,12 @@
 package com.project.pontointeligente.api.lancamento;
 
-import com.project.pontointeligente.api.centroCusto.CentroCusto;
+import com.project.pontointeligente.api.centroCusto.CentroCustoDto;
 import com.project.pontointeligente.api.centroCusto.CentroCustoService;
 import com.project.pontointeligente.api.funcionario.Funcionario;
-import com.project.pontointeligente.api.response.Response;
 import com.project.pontointeligente.api.funcionario.FuncionarioService;
+import com.project.pontointeligente.api.response.Response;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,26 @@ public class LancamentoControllerPersistencia {
 		log.info("Adicionando lançamento: {}", lancamentoDto.toString());
         LancamentoCrudDto lancamentoCrudDto = CRUD(lancamentoDto, result, OperacaoEnum.INCLUSAO, null);
         return inclusaoAlteracao(lancamentoCrudDto);
+    }
+
+    @PostMapping(value = "/assinar")
+    public AssinaturaDto assinarLancamento(@RequestBody AssinaturaDto assinaturaDto) throws Exception {
+        Optional<Lancamento> lancamento = lancamentoService.buscarLancamentoPorId(assinaturaDto.getLancamentoId());
+        if (lancamento.isPresent() && assinaturaDto.getSenha() != null) {
+            if (assinaturaDto.getSenha().length() < 6) {
+                throw new Exception("Senha muito curta !");
+            }
+            String token = Jwts.builder().setPayload(lancamento.get().getData().toString())
+                    .signWith(SignatureAlgorithm.HS512, assinaturaDto.getSenha()).compact();
+            lancamento.get().setAssinaturaHash(token);
+            lancamentoService.persistirLancamento(lancamento.get());
+
+            assinaturaDto.setSenha("");
+            assinaturaDto.setToken(token);
+            return assinaturaDto;
+        } else {
+            throw new Exception("Lancamento não encontrado ou assinatura não informada");
+        }
     }
 
     @PutMapping(value = "/{id}")
@@ -105,7 +127,7 @@ public class LancamentoControllerPersistencia {
         LancamentoCrudDto dto = new LancamentoCrudDto();
         Response<LancamentoDto> response = new Response<>();
         Optional<Funcionario> funcionario = funcionarioService.buscarPorId(lancamentoDto.getFuncionarioId());
-        Optional<CentroCusto> centroCusto = centroCustoService.buscarPorId(lancamentoDto.getCentroCusto());
+        Optional<CentroCustoDto> centroCusto = centroCustoService.buscarPorId(lancamentoDto.getCentroCusto());
         dto.setResponse(response);
 
         dto.setValido(isFuncionarioValido(lancamentoDto, result, response, funcionario) &&

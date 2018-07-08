@@ -3,15 +3,13 @@ package com.project.pontointeligente.api.centroCusto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/centroCusto")
+@RequestMapping("/api/centro-custo")
 @CrossOrigin(origins = "*")
 public class CentroCustoController {
 
@@ -40,20 +38,17 @@ public class CentroCustoController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public void remover(@PathVariable("id") Long id) {
-        Optional<CentroCusto> centroCusto = service.buscarPorId(id);
-        if (centroCusto.isPresent()) {
-            service.excluir(centroCusto.get());
-        }
+    public void remover(@PathVariable("id") Long id) throws Exception {
+        service.excluir(id);
     }
 
     @GetMapping(value = "/{id}")
     public CentroCustoDto exibir(@PathVariable("id") Long id) {
-        return null;
+        return service.buscarPorId(id).get();
     }
 
     @GetMapping(value = "/listAll")
     public List<CentroCustoDto> listarTodos() {
-        return null;
+        return service.listar();
     }
 }
