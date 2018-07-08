@@ -9,12 +9,11 @@
 	<field name="entrada" class="java.sql.Timestamp"/>
 	<field name="saida" class="java.sql.Timestamp"/>
 	<field name="centroCusto" class="java.lang.Integer"/>
-	<field name="total" class="java.lang.Double"/>
+	<field name="total" class="java.lang.String"/>
 	<field name="assinado" class="java.lang.String"/>
 	<field name="ativo" class="java.lang.String"/>
-	<field name="entrada2" class="java.sql.Time"/>
-	<field name="saida2" class="java.sql.Time"/>
-	<field name="centroCusto2" class="java.lang.Integer"/>
+	<field name="saldo" class="java.lang.String"/>
+	<field name="salario" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -61,46 +60,25 @@
 				<text><![CDATA[Entrada]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="85" y="0" width="70" height="20" uuid="2051a229-6d18-4d5e-9d11-dfff2ac9e0c5"/>
+				<reportElement x="170" y="0" width="70" height="20" uuid="2051a229-6d18-4d5e-9d11-dfff2ac9e0c5"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Saída]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="170" y="0" width="70" height="20" uuid="6aa4c91f-8096-43b1-834a-7ba6e9b7b6c0"/>
+				<reportElement x="340" y="0" width="70" height="20" uuid="6aa4c91f-8096-43b1-834a-7ba6e9b7b6c0"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Centro de Custo]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="510" y="0" width="65" height="20" uuid="859433d3-e9bd-4de6-9b52-a31374026804"/>
+				<reportElement x="486" y="0" width="65" height="20" uuid="859433d3-e9bd-4de6-9b52-a31374026804"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="255" y="0" width="70" height="20" uuid="4e6323f5-7933-4a1f-8748-c3783ece0d02"/>
-				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Entrada]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="340" y="0" width="70" height="20" uuid="3b421b31-2ef1-49ab-904f-251442810f84"/>
-				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Saída]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="425" y="0" width="70" height="20" uuid="a20fa883-2bd6-4ef9-a07c-19632a06ffff"/>
-				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Centro de Custo]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -116,7 +94,7 @@
 				<textFieldExpression><![CDATA[$F{entrada}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="85" y="0" width="70" height="20" uuid="f829e2b5-b934-4060-a59b-2680e13f9e94">
+				<reportElement x="170" y="0" width="70" height="20" uuid="f829e2b5-b934-4060-a59b-2680e13f9e94">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0cee1f0a-49c3-4a8c-89d3-90f8f017d3f8"/>
 				</reportElement>
 				<textElement textAlignment="Center">
@@ -125,7 +103,7 @@
 				<textFieldExpression><![CDATA[$F{saida}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="170" y="0" width="70" height="20" uuid="39a24d89-0a76-40ed-a8b3-a3bcc7a85100">
+				<reportElement x="340" y="0" width="70" height="20" uuid="39a24d89-0a76-40ed-a8b3-a3bcc7a85100">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f767a7f6-5547-4646-ad2d-df0c80fc195b"/>
 				</reportElement>
 				<textElement textAlignment="Center">
@@ -134,39 +112,38 @@
 				<textFieldExpression><![CDATA[$F{centroCusto}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="510" y="0" width="65" height="20" uuid="791a336d-4a0d-445c-bdf3-44b0f2877281">
+				<reportElement x="486" y="0" width="65" height="20" uuid="791a336d-4a0d-445c-bdf3-44b0f2877281">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ab8f1962-2ed7-4b58-86e2-dd5deb8c6418"/>
 				</reportElement>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="255" y="0" width="70" height="20" uuid="b5e2fec0-cd20-4a71-99e4-411de2759142">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="888bd03b-cc8e-43e9-9a27-42eadbf58cb4"/>
-				</reportElement>
-				<textFieldExpression><![CDATA[$F{entrada2}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="340" y="0" width="70" height="20" uuid="26d8810a-e86a-4063-8f14-16dd2ca7bc76">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="483e4538-e1bb-44d8-ad98-6cc89ce03487"/>
-				</reportElement>
-				<textFieldExpression><![CDATA[$F{saida2}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="425" y="0" width="70" height="20" uuid="dd7e468d-9adc-427c-a723-820319bc3ef3">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="93d75dcc-c4ca-4c86-8489-2bfd77989577"/>
-				</reportElement>
-				<textFieldExpression><![CDATA[$F{centroCusto2}]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
-	<summary>
-		<band height="22" splitType="Stretch">
+	<pageFooter>
+		<band height="55">
+			<staticText>
+				<reportElement x="408" y="5" width="65" height="20" uuid="681c81b7-c59d-4e8e-9e73-0c1278cd10d5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo: ]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="460" y="0" width="90" height="21" uuid="cc3f5c46-83e9-4482-9fc9-299a51ef565d"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<reportElement x="473" y="5" width="80" height="20" uuid="17bdc41a-e947-4df5-883f-8ae1c658a741"/>
+				<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="368" y="35" width="105" height="20" uuid="1e6174c3-b299-49c1-a6cb-f8cc9e814dd5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor a receber:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="473" y="35" width="80" height="20" uuid="45e30742-a59a-41e8-916c-bd21ec5eb2ca"/>
+				<textFieldExpression><![CDATA[$F{salario}]]></textFieldExpression>
 			</textField>
 		</band>
-	</summary>
+	</pageFooter>
 </jasperReport>

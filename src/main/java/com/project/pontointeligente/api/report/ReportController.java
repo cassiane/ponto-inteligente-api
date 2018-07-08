@@ -17,31 +17,31 @@ public class ReportController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/folha-ponto-analitico/{centroCusto}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    @RequestMapping(value = "/folha-ponto-analitico/centro-custo/{centroCusto}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] folhaPontoAnaliticoPorCentroCusto(@PathVariable("centroCusto") int centroCusto) {
         return reportService.imprimirEspelhoPontoAnaliticoPorCentroCusto(centroCusto);
     }
 
     @ResponseBody
-    @RequestMapping(value = "/folha-ponto-analitico/{idFuncionario}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    @RequestMapping(value = "/folha-ponto-analitico/funcionario/{idFuncionario}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] folhaPontoAnaliticoPorFuncionario(@PathVariable("idFuncionario") Long idFuncionario) {
         return reportService.imprimirEspelhoPontoAnaliticoPorFuncionario(idFuncionario);
     }
 
     @ResponseBody
-    @RequestMapping(value = "/folha-ponto-resumo/{centroCusto}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    @RequestMapping(value = "/folha-ponto-resumo/centro-custo/{centroCusto}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] folhaPontoResumoPorCentroCusto(@PathVariable("centroCusto") int centroCusto) {
         return reportService.imprimirEspelhoPontoResumoPorCentroCusto(centroCusto);
     }
 
     @ResponseBody
-    @RequestMapping(value = "/folha-ponto-resumo/{idFuncionario}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    @RequestMapping(value = "/folha-ponto-resumo/funcionario/{idFuncionario}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] folhaPontoResumoPorFuncionario(@PathVariable("idFuncionario") Long idFuncionario) {
         return reportService.imprimirEspelhoPontoResumoPorFuncionario(idFuncionario);
     }
 
     @ResponseBody
-    @RequestMapping(value = "/folha-ponto-resumo/{idLancamento}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    @RequestMapping(value = "/comprovante-lancamento/{idLancamento}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] comprovantePonto(@PathVariable("idLancamento") Long idLancamento) {
         return reportService.imprimirComprovantePonto(idLancamento);
     }

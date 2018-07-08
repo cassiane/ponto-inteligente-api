@@ -126,4 +126,9 @@ public class LancamentoServiceImpl  implements LancamentoService {
                 Timestamp.valueOf(dataInicial),
                 Timestamp.valueOf(dataFinal));
     }
+
+    @Override
+    public String assinarLancamento(Long idLancamento, String senhaAssinatura) {
+        return null;
+    }
 }

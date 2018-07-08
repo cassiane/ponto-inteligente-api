@@ -4,14 +4,14 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="nmFuncionario" class="java.lang.String"/>
-	<field name="competencia" class="java.lang.String"/>
+    <field name="nmFuncionario"/>
+    <field name="competencia"/>
 	<field name="entrada" class="java.sql.Timestamp"/>
 	<field name="saida" class="java.sql.Timestamp"/>
 	<field name="centroCusto" class="java.lang.Integer"/>
-	<field name="total" class="java.lang.Double"/>
-	<field name="assinado" class="java.lang.String"/>
-	<field name="ativo" class="java.lang.String"/>
+    <field name="total"/>
+    <field name="assinado"/>
+    <field name="ativo"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -65,11 +65,11 @@
 				<text><![CDATA[Saída]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="270" y="0" width="80" height="20" uuid="6aa4c91f-8096-43b1-834a-7ba6e9b7b6c0"/>
+                <reportElement x="270" y="0" width="85" height="20" uuid="6aa4c91f-8096-43b1-834a-7ba6e9b7b6c0"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Centro de Custo]]></text>
+                <text><![CDATA[Centro Custo]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="450" y="0" width="80" height="20" uuid="859433d3-e9bd-4de6-9b52-a31374026804"/>

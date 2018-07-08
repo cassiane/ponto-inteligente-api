@@ -33,6 +33,7 @@ public class Lancamento implements Serializable {
     private String previousHash;
     private Boolean ativo;
     private CentroCusto centroCusto;
+	private String assinaturaHash;
 
 	public Lancamento(LancamentoCrudDto lancamentoCrudDto) {
 		Lancamento lancamento = lancamentoCrudDto.getLancamento();
@@ -143,6 +144,15 @@ public class Lancamento implements Serializable {
 
 	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
+	}
+
+	@Column(name = "assinatura_hash")
+	public String getAssinaturaHash() {
+		return assinaturaHash;
+	}
+
+	public void setAssinaturaHash(String assinaturaHash) {
+		this.assinaturaHash = assinaturaHash;
 	}
 
 	@PreUpdate
